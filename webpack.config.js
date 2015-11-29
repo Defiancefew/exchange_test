@@ -6,7 +6,7 @@ const path = require('path'),
 
 module.exports = {
     devtool: (process.env.NODE_ENV == 'development') ? 'eval' : null,
-    entry: (process.env.NODE_ENV == 'development') ? ['webpack-dev-server/client?http://localhost:3000', 'webpack/hot/dev-server', './src/js/common'] : './src/js/common',
+    entry: (process.env.NODE_ENV == 'development') ? ['webpack-dev-server/client?http://localhost:3000', 'webpack/hot/dev-server', './frontend/js/common'] : './frontend/js/common',
     output: {
         path: path.join(__dirname, 'dist'),
         filename: 'bundle.js',
@@ -42,7 +42,7 @@ module.exports = {
             NODE_ENV: JSON.stringify(NODE_ENV)
         }),
         new HtmlWebpackPlugin({
-            template: './src/index.html',
+            template: './frontend/index.html',
             inject: 'body'
         }),
         new ExtractTextPlugin('style.css', {disable: process.env.NODE_ENV == 'development'})
