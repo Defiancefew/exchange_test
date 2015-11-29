@@ -1,6 +1,6 @@
 "use strict";
 
-let app = require('express')(),
+var app = require('express')(),
     server = require('http').createServer(app),
     io = require('socket.io')(server),
     path = require('path'),
@@ -9,45 +9,120 @@ let app = require('express')(),
     util = require('util'),
     _ = require('lodash'),
     mongoose = require('mongoose'),
-    bodyParser = require('body-parser');
+    bodyParser = require('body-parser'),
+    jwt = require('jwt-simple'),
+    passport = require('passport'),
+    LocalStrategy = require('passport-local').Strategy,
+    morgan = require('morgan'),
+    User = require('./models/User.js');
 
-//app.use(bodyParser.json());
-//app.use(bodyParser.urlencoded({ extended: true }));
-//
-//app.use((req, res, next)=> {
-//    res.header('Access-Control-Allow-Origin', '*');
-//    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-//    res.header('Access-Control-Allow-Headers', 'Content-type, Authorization');
-//
-//    next();
-//});
-//
-//app.post('/register', (req, res) => {
-//    let user = req.body;
-//
-//    let newUser = new User({
-//        email: user.name,
-//        password: user.password
-//    });
-//
-//    newUser.save((err) => {
-//        res.status(200).json(newUser);
-//    })
-//});
+//app.use(morgan('dev'));
+//app.use(bodyParser.urlencoded({extended: true}));
 
-mongoose.connect('mongodb://127.0.0.1:27017/test');
+app.use(bodyParser.json());
+app.use(passport.initialize());
 
-var db = mongoose.connection;
-
-db.on('error', function(err){
-    console.log('Error here.', err)
+passport.serializeUser(function (user, done) {
+    done(null, user.id);
 });
 
-//let User = mongoose.model('User', {
-//    email: String,
-//    password: String
+
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-type, Authorization');
+
+    next();
+});
+
+mongoose.connect('mongodb://localhost/test');
+
+// TODO: Morgan
+
+var strategyOptions = {
+    usernameField: 'email'
+};
+
+var loginStrategy = new LocalStrategy(strategyOptions, function (email, password, done) {
+
+    var searchUser = {email: email};
+
+    User.findOne(searchUser, (err, user) => {
+        if (err) {
+            return done(err);
+        }
+
+        if (!user) {
+            return done(null, false, {message: 'Wrong email or password'})
+        }
+
+        user.comparePassword(password, function (err, isMatch) {
+
+            if (err) {
+                return done(err);
+            }
+
+            if (!isMatch) return done(null, false, {message: 'Wrong email or password'});
+
+            return done(null, user);
+        })
+    });
+});
+
+var registerStrategy = new LocalStrategy(strategyOptions, function (email, password, done) {
+
+    var newUser = new User({
+        email: email,
+        password: password
+    });
+
+    newUser.save(function (err) {
+        done(null, newUser);
+    });
+
+
+});
+
+passport.use('local-register', registerStrategy);
+passport.use('local-login', loginStrategy);
+
+app.post('/register', passport.authenticate('local-register'), function (req, res) {
+    createSendToken(req.user, res);
+});
+
+//app.get('/currency', (req, res) => {
+//    let token = req.headers.authorization.split(' ')[1];
+//    let payload = jwt.decode(token, 'shh...');
+//
+//    if (!payload.sub) {
+//        res.status(401).send({
+//            message: 'Authentication failed'
+//        });
+//    }
+//    if (!req.headers.authorization) {
+//        return res.status(401).send({
+//            message: 'You are not authorized'
+//        });
+//    }
 //});
 //
+
+app.post('/login', passport.authenticate('local-login'), function (req, res) {
+    createSendToken(req.user, res);
+});
+
+function createSendToken(user, res) {
+    var payload = {
+        sub: user.id
+    };
+
+    var token = jwt.encode(payload, 'shh...');
+
+    res.status(200).send({
+        user: user.toJSON(),
+        token: token
+    });
+}
 //
 //let options = {
 //    urlOER: 'https://openexchangerates.org/api/latest.json?app_id=d4f7a49c4d5842feb302f37549c768f9',
@@ -83,8 +158,8 @@ db.on('error', function(err){
 //    }
 //
 //}
-//
-//server.listen(3000, (err)=> {
-//    if (err) console.log(err);
-//    console.log(`Listening on localhost:3000`);
-//});
+
+server.listen(3000, (err)=> {
+    if (err) console.log(err);
+    console.log(`Listening on localhost:3000`);
+});

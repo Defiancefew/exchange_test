@@ -6,7 +6,7 @@ const path = require('path'),
 
 module.exports = {
     devtool: (process.env.NODE_ENV == 'development') ? 'eval' : null,
-    entry: (process.env.NODE_ENV == 'development') ? ['webpack-dev-server/client?http://localhost:3000', 'webpack/hot/dev-server', './frontend/js/common'] : './frontend/js/common',
+    entry: (process.env.NODE_ENV == 'development') ? ['webpack-dev-server/client?http://localhost:3001', 'webpack/hot/dev-server', './client/js/common'] : './client/js/common',
     output: {
         path: path.join(__dirname, 'dist'),
         filename: 'bundle.js',
@@ -14,10 +14,10 @@ module.exports = {
     },
     module: {
         loaders: [
-            {test: /bootstrap\/js\//, loader: 'imports?jQuery=jquery'},
+            //{test: /bootstrap\/js\//, loader: 'imports?jQuery=jquery'},
             {test: /\.html$/, exclude: /node_modules/, loader: 'raw'},
             {test: /\.css$/, loader: 'style-loader!css-loader' },
-            {test: /\.js$/, loaders: ['babel'], exclude: /node_modules/, include: path.join(__dirname, './src/js')},
+            {test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/, include: path.join(__dirname, './client/js')},
             {test: /\.json$/, exclude: /node_modules/, loader: "json"},
 
             //{test: /\.jsx?$/, exclude: /(node_modules|bower_components)/, loader: 'react-hot!babel' },
@@ -42,7 +42,7 @@ module.exports = {
             NODE_ENV: JSON.stringify(NODE_ENV)
         }),
         new HtmlWebpackPlugin({
-            template: './frontend/index.html',
+            template: './client/index.html',
             inject: 'body'
         }),
         new ExtractTextPlugin('style.css', {disable: process.env.NODE_ENV == 'development'})
