@@ -3,12 +3,13 @@
 var bcrypt = require('bcrypt-nodejs'),
     mongoose = require('mongoose');
 
+mongoose.connect('mongodb://localhost/test');
+
 var UserSchema = new mongoose.Schema({
     email: String,
     password: String
 });
 
-module.exports = mongoose.model('User', UserSchema);
 
 UserSchema.methods.toJSON = function () {
     var user = this.toObject();
@@ -42,4 +43,9 @@ UserSchema.pre('save', function (next) {
         })
     })
 });
+
+mongoose.model('User', UserSchema);
+
+module.exports = mongoose.model('User');
+
 

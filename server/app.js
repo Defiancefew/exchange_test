@@ -19,35 +19,20 @@ var app = require('express')(),
 //app.use(morgan('dev'));
 //app.use(bodyParser.urlencoded({extended: true}));
 
-app.use(bodyParser.json());
-app.use(passport.initialize());
-
 passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
-
-
-app.use(function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-type, Authorization');
-
-    next();
-});
-
-mongoose.connect('mongodb://localhost/test');
 
 // TODO: Morgan
 
 var strategyOptions = {
     usernameField: 'email'
 };
-
 var loginStrategy = new LocalStrategy(strategyOptions, function (email, password, done) {
 
     var searchUser = {email: email};
 
-    User.findOne(searchUser, (err, user) => {
+    User.findOne(searchUser, function (err, user) {
         if (err) {
             return done(err);
         }
@@ -56,7 +41,7 @@ var loginStrategy = new LocalStrategy(strategyOptions, function (email, password
             return done(null, false, {message: 'Wrong email or password'})
         }
 
-        user.comparePassword(password, function (err, isMatch) {
+        user.comparePasswords(password, function (err, isMatch) {
 
             if (err) {
                 return done(err);
@@ -68,7 +53,6 @@ var loginStrategy = new LocalStrategy(strategyOptions, function (email, password
         })
     });
 });
-
 var registerStrategy = new LocalStrategy(strategyOptions, function (email, password, done) {
 
     var newUser = new User({
@@ -82,30 +66,27 @@ var registerStrategy = new LocalStrategy(strategyOptions, function (email, passw
 
 
 });
-
 passport.use('local-register', registerStrategy);
 passport.use('local-login', loginStrategy);
+
+app.use(passport.initialize());
+app.use(bodyParser.json());
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-type, Authorization');
+
+    next();
+});
+
+
+//app.post('/register', passport.authenticate('local-register'), function (req, res) {
+//    createSendToken(req.user, res);
+//});
 
 app.post('/register', passport.authenticate('local-register'), function (req, res) {
     createSendToken(req.user, res);
 });
-
-//app.get('/currency', (req, res) => {
-//    let token = req.headers.authorization.split(' ')[1];
-//    let payload = jwt.decode(token, 'shh...');
-//
-//    if (!payload.sub) {
-//        res.status(401).send({
-//            message: 'Authentication failed'
-//        });
-//    }
-//    if (!req.headers.authorization) {
-//        return res.status(401).send({
-//            message: 'You are not authorized'
-//        });
-//    }
-//});
-//
 
 app.post('/login', passport.authenticate('local-login'), function (req, res) {
     createSendToken(req.user, res);
@@ -123,7 +104,28 @@ function createSendToken(user, res) {
         token: token
     });
 }
+
+server.listen(3000, (err)=> {
+    if (err) console.log(err);
+    console.log(`Listening on localhost:3000`);
+});
+
+//app.get('/currency', (req, res) => {
+//    let token = req.headers.authorization.split(' ')[1];
+//    let payload = jwt.decode(token, 'shh...');
 //
+//    if (!payload.sub) {
+//        res.status(401).send({
+//            message: 'Authentication failed'
+//        });
+//    }
+//    if (!req.headers.authorization) {
+//        return res.status(401).send({
+//            message: 'You are not authorized'
+//        });
+//    }
+//});
+
 //let options = {
 //    urlOER: 'https://openexchangerates.org/api/latest.json?app_id=d4f7a49c4d5842feb302f37549c768f9',
 //    urlECB: 'http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml',
@@ -142,24 +144,3 @@ function createSendToken(user, res) {
 //        }
 //    }
 //}
-//
-//
-//class Driver {
-//    static getContent() {
-//
-//    }
-//
-//    static subScribe() {
-//
-//    }
-//
-//    static unsubscribe() {
-//
-//    }
-//
-//}
-
-server.listen(3000, (err)=> {
-    if (err) console.log(err);
-    console.log(`Listening on localhost:3000`);
-});

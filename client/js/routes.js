@@ -1,4 +1,4 @@
-export default function($stateProvider,$urlRouterProvider){
+export default function ($stateProvider, $urlRouterProvider) {
 
     $urlRouterProvider.otherwise('/');
 
@@ -7,10 +7,20 @@ export default function($stateProvider,$urlRouterProvider){
         //    url: '/',
         //    template: '<main></main>'
         //})
-        .state('register',{
-        url: '/register',
-        template: '<register></register>'
-    });
-
-
+        .state('login', {
+            url: '/login',
+            template: '<login></login>'
+        })
+        .state('currency', {
+            url: '/currency',
+            template: '<currency></currency>'
+        })
+        .state('config', {
+            url: '/config',
+            template: '<config></config>'
+        })
+        .state('register', {
+            url: '/register',
+            template: '<register></register>'
+        });
 }
