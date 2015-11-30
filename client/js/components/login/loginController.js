@@ -1,7 +1,7 @@
-export default function ($http) {
+export default function ($http,API_URL) {
     let vm = this;
 
-    let url = "http://localhost:3000/login";
+    let url = API_URL + 'login';
 
     vm.user = {};
 

@@ -79,11 +79,6 @@ app.use(function (req, res, next) {
     next();
 });
 
-
-//app.post('/register', passport.authenticate('local-register'), function (req, res) {
-//    createSendToken(req.user, res);
-//});
-
 app.post('/register', passport.authenticate('local-register'), function (req, res) {
     createSendToken(req.user, res);
 });
