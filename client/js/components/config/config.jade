@@ -1,6 +1,8 @@
 .container
-    form
+    form(ng-submit="config.submit()")
         label(for="apiKey") Yes,I want to specify my own OpenExchangeRates API key
             input(id="apiKey" type="checkbox" ng-model="config.apiKeySubmit")
         input(ng-if="config.apiKeySubmit" type="text" ng-model="config.apiKey")
+        label(for="apiPassword" ng-if="config.apiKeySubmit") And confirm your password
+            input(id="apiPassword"  type="text" ng-model="config.password")
         button(ng-if="config.apiKeySubmit") Submit

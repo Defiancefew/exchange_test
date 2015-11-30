@@ -1,4 +1,4 @@
-import io from 'socket.io-client'
+import io from 'socket.io-client';
 
 export default function (API_URL) {
     let service = {},

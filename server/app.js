@@ -1,6 +1,6 @@
 "use strict";
 
-let app = require('express')(),
+var app = require('express')(),
     server = require('http').createServer(app),
     io = require('socket.io')(server),
     path = require('path'),
@@ -10,68 +10,24 @@ let app = require('express')(),
     _ = require('lodash'),
     mongoose = require('mongoose'),
     bodyParser = require('body-parser'),
-    jwt = require('jwt-simple'),
     passport = require('passport'),
-    LocalStrategy = require('passport-local').Strategy,
+    //LocalStrategy = require('passport-local').Strategy,
     morgan = require('morgan'),
     moment = require('moment'),
+    auth = require('./auth.js'),
     User = require('./models/User.js');
 
 //app.use(morgan('dev'));
 //app.use(bodyParser.urlencoded({extended: true}));
 
-//mongoose.connect('mongodb://localhost/test');
-
+// TODO: Learn Morgan
 
 passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
 
-// TODO: Learn Morgan
-
-var strategyOptions = {
-    usernameField: 'email'
-};
-var loginStrategy = new LocalStrategy(strategyOptions, function (email, password, done) {
-
-    var searchUser = {email: email};
-
-    User.findOne(searchUser, function (err, user) {
-        if (err) {
-            return done(err);
-        }
-
-        if (!user) {
-            return done(null, false, {message: 'Wrong email or password'})
-        }
-
-        user.comparePasswords(password, function (err, isMatch) {
-
-            if (err) {
-                return done(err);
-            }
-
-            if (!isMatch) return done(null, false, {message: 'Wrong email or password'});
-
-            return done(null, user);
-        })
-    });
-});
-var registerStrategy = new LocalStrategy(strategyOptions, function (email, password, done) {
-
-    var newUser = new User({
-        email: email,
-        password: password
-    });
-
-    newUser.save(function (err) {
-        done(null, newUser);
-    });
-
-
-});
-passport.use('local-register', registerStrategy);
-passport.use('local-login', loginStrategy);
+passport.use('local-register', auth.registerStrategy);
+passport.use('local-login', auth.loginStrategy);
 
 app.use(passport.initialize());
 app.use(bodyParser.json());
@@ -84,53 +40,55 @@ app.use(function (req, res, next) {
 });
 
 app.post('/register', passport.authenticate('local-register'), function (req, res) {
-    createSendToken(req.user, res);
+    auth.createSendToken(req.user, res);
 });
 
 app.post('/login', passport.authenticate('local-login'), function (req, res) {
-    createSendToken(req.user, res);
+    auth.createSendToken(req.user, res);
 });
+
 
 io.on('connection', function (socket) {
     socket.emit('news', {hello: 'world'});
-    socket.on('my other event', function (data) {
-        console.log(data);
+    socket.on('config', function (data) {
+
     });
 });
 
-function createSendToken(user, res) {
-    var payload = {
-        sub: user.id
-    };
-
-    var token = jwt.encode(payload, 'shh...');
-
-    res.status(200).send({
-        user: user.toJSON(),
-        token: token
-    });
-}
 
 server.listen(3000, (err)=> {
     if (err) console.log(err);
     console.log(`Listening on localhost:3000`);
 });
 
-//app.get('/currency', (req, res) => {
-//    let token = req.headers.authorization.split(' ')[1];
-//    let payload = jwt.decode(token, 'shh...');
-//
-//    if (!payload.sub) {
-//        res.status(401).send({
-//            message: 'Authentication failed'
-//        });
-//    }
-//    if (!req.headers.authorization) {
-//        return res.status(401).send({
-//            message: 'You are not authorized'
-//        });
-//    }
-//});
+app.post('/config',function(req,res){
+   console.log(req.body);
+
+    // TODO Mongo db.collection.findAndModify()
+
+});
+
+app.get('/currency', function (req, res) {
+
+    var message = {message: '123'};
+
+    if (!req.headers.authorization) {
+        return res.status(401).send({
+            message: 'You are not authorized'
+        });
+    } else {
+        let token = req.headers.authorization.split(' ')[1];
+        let payload = jwt.decode(token, 'shh...');
+
+        if (!payload.sub) {
+            res.status(401).send({
+                message: 'Authentication failed'
+            });
+        }
+        res.json(message);
+    }
+
+});
 
 //let options = {
 //    urlOER: 'https://openexchangerates.org/api/latest.json?app_id=d4f7a49c4d5842feb302f37549c768f9',

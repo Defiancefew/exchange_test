@@ -12,6 +12,7 @@ import register from './components/register/register.js';
 import login from './components/login/login.js';
 import logoutController from './components/login/logoutController.js';
 import loginFactory from './components/login/loginFactory.js';
+import loginInterceptor from './components/login/loginInterceptor.js';
 
 import currencyFactory from './components/currency/currencyFactory.js';
 import currency from './components/currency/currency.js';
@@ -22,6 +23,7 @@ angular.module('myApp', ['ui.router','ngMessages'])
     .controller('logoutController',logoutController)
     .factory('loginFactory', loginFactory)
     .factory('currencyFactory',currencyFactory)
+    .factory('loginInterceptor', loginInterceptor)
     .directive('header', header)
     .directive('register', register)
     .directive('login', login)

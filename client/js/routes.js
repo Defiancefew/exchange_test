@@ -1,4 +1,4 @@
-export default function ($stateProvider, $urlRouterProvider,$logProvider) {
+export default function ($stateProvider, $urlRouterProvider,$logProvider,$httpProvider) {
     $logProvider.debugEnabled(true);
     $urlRouterProvider.otherwise('/');
 
@@ -27,4 +27,6 @@ export default function ($stateProvider, $urlRouterProvider,$logProvider) {
             url: '/register',
             template: '<register></register>'
         });
+
+        $httpProvider.interceptors.push('loginInterceptor');
 }

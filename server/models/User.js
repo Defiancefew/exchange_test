@@ -7,7 +7,8 @@ mongoose.connect('mongodb://localhost/test');
 
 var UserSchema = new mongoose.Schema({
     email: String,
-    password: String
+    password: String,
+    apiKey: String
 });
 
 

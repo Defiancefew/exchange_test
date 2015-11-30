@@ -1,4 +1,4 @@
-export default function ($http,API_URL,loginFactory) {
+export default function ($http,API_URL,loginFactory,$state) {
     let vm = this;
 
     let url = API_URL + 'login';
@@ -9,6 +9,7 @@ export default function ($http,API_URL,loginFactory) {
         console.log(vm.user);
         $http.post(url, vm.user).success((res)=> {
             loginFactory.setToken(res.token);
+            $state.go('currency');
             console.log(res);
 
         }).error((err)=> {
