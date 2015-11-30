@@ -1,0 +1,6 @@
+.container
+    form
+        label(for="apiKey") Yes,I want to specify my own OpenExchangeRates API key
+            input(id="apiKey" type="checkbox" ng-model="config.apiKeySubmit")
+        input(ng-if="config.apiKeySubmit" type="text" ng-model="config.apiKey")
+        button(ng-if="config.apiKeySubmit") Submit

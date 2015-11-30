@@ -1,4 +1,4 @@
-export default function ($http,loginFactory,API_URL) {
+export default function ($http,loginFactory,API_URL,$log,$state) {
     let vm = this;
 
     let url = API_URL + 'register';
@@ -7,10 +7,11 @@ export default function ($http,loginFactory,API_URL) {
 
     vm.submit = function () {
         $http.post(url, vm.user).success((res)=> {
-            console.log(res);
+            $log.debug(res);
+            $state.go('currency');
             loginFactory.setToken(res.token);
         }).error((err)=> {
-            console.log(err);
+            $log.debug(err);
         })
     }
 }

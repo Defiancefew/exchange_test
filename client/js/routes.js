@@ -1,5 +1,5 @@
-export default function ($stateProvider, $urlRouterProvider) {
-
+export default function ($stateProvider, $urlRouterProvider,$logProvider) {
+    $logProvider.debugEnabled(true);
     $urlRouterProvider.otherwise('/');
 
     $stateProvider
@@ -10,6 +10,10 @@ export default function ($stateProvider, $urlRouterProvider) {
         .state('login', {
             url: '/login',
             template: '<login></login>'
+        })
+        .state('logout', {
+            url: '/logout',
+            controller: 'logoutController'
         })
         .state('currency', {
             url: '/currency',

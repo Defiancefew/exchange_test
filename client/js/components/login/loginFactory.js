@@ -1,6 +1,6 @@
 export default function ($window) {
     let storage = $window.localStorage,
-        cachedToken,
+        cachedToken = null,
         userToken = 'userToken';
 
     return {

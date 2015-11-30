@@ -1,4 +1,11 @@
 ul
-    li: a(ui-sref="register" ui-sref-active="active") Register
-    li: a(ui-sref="login" ui-sref-active="active") Login
-    li: a(ui-sref="currency" ui-sref-active="active") Currency
+    li(ng-hide="header.isAuthenticated()")
+        a( ui-sref="register" ui-sref-active="active") Register
+    li(ng-show="header.isAuthenticated()")
+        a(ui-sref="logout" ui-sref-active="active") Logout
+    li(ng-hide="header.isAuthenticated()")
+        a(ui-sref="login" ui-sref-active="active") Login
+    li(ng-show="header.isAuthenticated()")
+        a(ui-sref="config" ui-sref-active="active") Config
+    li
+        a(ui-sref="currency" ui-sref-active="active") Currency

@@ -1,6 +1,6 @@
 "use strict";
 
-var app = require('express')(),
+let app = require('express')(),
     server = require('http').createServer(app),
     io = require('socket.io')(server),
     path = require('path'),
@@ -14,16 +14,20 @@ var app = require('express')(),
     passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy,
     morgan = require('morgan'),
+    moment = require('moment'),
     User = require('./models/User.js');
 
 //app.use(morgan('dev'));
 //app.use(bodyParser.urlencoded({extended: true}));
 
+//mongoose.connect('mongodb://localhost/test');
+
+
 passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
 
-// TODO: Morgan
+// TODO: Learn Morgan
 
 var strategyOptions = {
     usernameField: 'email'
@@ -85,6 +89,13 @@ app.post('/register', passport.authenticate('local-register'), function (req, re
 
 app.post('/login', passport.authenticate('local-login'), function (req, res) {
     createSendToken(req.user, res);
+});
+
+io.on('connection', function (socket) {
+    socket.emit('news', {hello: 'world'});
+    socket.on('my other event', function (data) {
+        console.log(data);
+    });
 });
 
 function createSendToken(user, res) {
