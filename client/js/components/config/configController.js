@@ -3,13 +3,13 @@ export default function (API_URL, $http) {
 
     vm.apiKeySubmit = false;
     vm.apiKey = null;
-    vm.password = "";
 
 
 
     vm.submit = function () {
-        $http.post(API_URL + 'config', {apiKey: vm.apiKey, password: vm.password}).success((res)=> {
+        $http.post(API_URL + 'config', {apiKey: vm.apiKey}).success((res)=> {
             console.log(res);
+            vm.apiKey = null;
         }).error((err)=> {
             console.log(err);
         })

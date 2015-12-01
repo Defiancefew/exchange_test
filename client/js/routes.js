@@ -1,12 +1,8 @@
-export default function ($stateProvider, $urlRouterProvider,$logProvider,$httpProvider) {
+export default function ($stateProvider, $urlRouterProvider, $logProvider, $httpProvider) {
     $logProvider.debugEnabled(true);
     $urlRouterProvider.otherwise('/');
 
     $stateProvider
-        //.state('main',{
-        //    url: '/',
-        //    template: '<main></main>'
-        //})
         .state('login', {
             url: '/login',
             template: '<login></login>'
@@ -28,5 +24,5 @@ export default function ($stateProvider, $urlRouterProvider,$logProvider,$httpPr
             template: '<register></register>'
         });
 
-        $httpProvider.interceptors.push('loginInterceptor');
+    $httpProvider.interceptors.push('loginInterceptor');
 }

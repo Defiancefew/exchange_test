@@ -5,6 +5,8 @@ export default function ($http,API_URL,loginFactory,$state) {
 
     vm.user = {};
 
+    vm.logout = loginFactory.removeToken();
+
     vm.submit = function () {
         console.log(vm.user);
         $http.post(url, vm.user).success((res)=> {

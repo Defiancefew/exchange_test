@@ -6,7 +6,7 @@ const path = require('path'),
 
 module.exports = {
     devtool: (process.env.NODE_ENV == 'development') ? 'eval' : null,
-    entry: (process.env.NODE_ENV == 'development') ? ['webpack-dev-server/client?http://localhost:3001', 'webpack/hot/dev-server', './client/js/common'] : './client/js/common',
+    entry: (process.env.NODE_ENV == 'development') ? ['webpack-dev-server/client?http://localhost:3000', 'webpack/hot/dev-server', './client/js/common'] : './client/js/common',
     output: {
         path: path.join(__dirname, 'dist'),
         filename: 'bundle.js',

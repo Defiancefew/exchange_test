@@ -19,7 +19,7 @@ import currency from './components/currency/currency.js';
 
 angular.module('myApp', ['ui.router','ngMessages'])
     .config(routes)
-    .constant('API_URL', 'http://localhost:3000/')
+    .constant('API_URL', 'http://localhost:3001/')
     .controller('logoutController',logoutController)
     .factory('loginFactory', loginFactory)
     .factory('currencyFactory',currencyFactory)
@@ -35,3 +35,6 @@ angular.module('myApp', ['ui.router','ngMessages'])
 //console.log(now);
 //console.log(moment(now).fromNow());
 
+/* TODO Ng messages validation
+   TODO Moment JS
+ */
