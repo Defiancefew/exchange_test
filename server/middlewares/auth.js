@@ -4,8 +4,8 @@ let LocalStrategy = require('passport-local').Strategy,
     jwt = require('jwt-simple'),
     User = require('../models/User.js'),
     strategyOptions = {
-    usernameField: 'email'
-};
+        usernameField: 'email'
+    };
 
 exports.loginStrategy = new LocalStrategy(strategyOptions, function (email, password, done) {
 
@@ -33,14 +33,25 @@ exports.loginStrategy = new LocalStrategy(strategyOptions, function (email, pass
 
 exports.registerStrategy = new LocalStrategy(strategyOptions, function (email, password, done) {
 
-    var newUser = new User({
-        email: email,
-        password: password,
-        apiKey: null
-    });
+    User.findOne({email: email}, (err, user) => {
+        if (err) {
+            return done(err);
+        }
 
-    newUser.save(function (err) {
-        done(null, newUser);
+        if (user) {
+            return done(null, false, {message: 'Email already taken'});
+        }
+        else {
+            var newUser = new User({
+                email: email,
+                password: password,
+                apiKey: null
+            });
+
+            newUser.save(function (err) {
+                done(null, newUser);
+            });
+        }
     });
 });
 
@@ -57,7 +68,7 @@ exports.createSendToken = function createSendToken(user, res) {
     });
 };
 
-exports.tokenCheck = function tokenCheck(req,res){
+exports.tokenCheck = function tokenCheck(req, res) {
     if (!req.headers.authorization) {
         return res.status(401).send({
             message: 'You are not authorized'

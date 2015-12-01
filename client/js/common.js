@@ -8,6 +8,7 @@ import routes from "./routes";
 import header from "./components/header/header.js";
 import config from "./components/config/config.js";
 import register from './components/register/register.js';
+import socketFactory from './components/currency/socketFactory.js';
 
 import login from './components/login/login.js';
 import logoutController from './components/login/logoutController.js';
@@ -24,6 +25,7 @@ angular.module('myApp', ['ui.router','ngMessages'])
     .factory('loginFactory', loginFactory)
     .factory('currencyFactory',currencyFactory)
     .factory('loginInterceptor', loginInterceptor)
+    .factory('socketFactory',socketFactory)
     .directive('header', header)
     .directive('register', register)
     .directive('login', login)

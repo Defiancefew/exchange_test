@@ -20,16 +20,16 @@ app.post('/config', (req, res) => {
 });
 
 app.get('/currency', (req, res) => {
-    let apiKeys = null;
     let payload = auth.tokenCheck(req, res);
 
-    User.findOne({_id: payload.sub}, 'apiKey', (err, user)=> {
-        if(err) throw(err);
-        apiKeys = user.apiKey;
+    User.findOne({_id: payload.sub}, (err, user)=> {
+        if (err) {
+            throw(err)
+        }
 
-        if(apiKeys.length){
-            res.status(200).send({api: apiKeys});
-        }else{
+        if (user.apiKey) {
+            res.status(200).send({api: user.apiKey});
+        } else {
             res.status(404).send({message: 'Bad news everyone'});
         }
     });

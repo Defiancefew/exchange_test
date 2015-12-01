@@ -1,4 +1,4 @@
-export default function ($http, API_URL) {
+export default function ($http, API_URL,socketFactory) {
     let vm = this;
 
     vm.currency = function () {

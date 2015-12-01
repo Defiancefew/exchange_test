@@ -16,6 +16,7 @@
     "bcrypt-nodejs": "0.0.3",
     "jwt-simple": "^0.3.1",
     "lodash": "^3.10.1",
+    "method-override": "^2.3.5",
     "moment": "^2.10.6",
     "mongoose": "^4.2.8",
     "morgan": "^1.6.1",
