@@ -1,4 +1,4 @@
-export default function ($http,API_URL,loginFactory,$state) {
+export default function ($http,API_URL,loginFactory,$state,alert) {
     let vm = this;
 
     let url = API_URL + 'login';
@@ -15,6 +15,7 @@ export default function ($http,API_URL,loginFactory,$state) {
             console.log(res);
 
         }).error((err)=> {
+            vm.alert = alert('Warning','Wrong login or password','Please try again');
             console.log(err);
         })
     }

@@ -21,7 +21,6 @@ app.post('/config', (req, res) => {
 
 app.get('/currency', (req, res) => {
     let payload = auth.tokenCheck(req, res);
-
     User.findOne({_id: payload.sub}, (err, user)=> {
         if (err) {
             throw(err)

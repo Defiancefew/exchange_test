@@ -4,3 +4,6 @@
         input(type="email" ng-model="login.user.email")
         input(type="password" ng-model="login.user.password")
         button Login here!
+    div(class="animated alert" ng-class="{'fadeInDown': login.alert.show,'fadeOut': !login.alert.show, 'alert-hidden': !login.alert.hasBeenShown}" ng-cloak)
+        div {{login.alert.title}}
+        div {{login.alert.message}}

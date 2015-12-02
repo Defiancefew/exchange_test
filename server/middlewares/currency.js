@@ -14,49 +14,78 @@ let options = {
     urlCUR: 'http://currency-api.appspot.com/api/USD/EUR.json'
 };
 
-//function getContent(url) {
-//    request(url, (error, response, body) => {
-//        if (!error && response.statusCode == 200) {
-//            parseString(body, (err, result)=> {
-//                //console.log(util.inspect(result["gesmes:Envelope"]["Cube"][0]["Cube"][0]["Cube"], false, null));
-//                let time = moment().format('MMMM Do YYYY, h:mm:ss a');
-//                    //timer = setTimeout(() => getContent(options.urlECB), 8000);
-//                console.log("Everything is okay", time);
-//                return {
-//                    unsubscribe(){
-//                        clearTimeout(timer)
-//                    },
-//                    data: result["gesmes:Envelope"]["Cube"][0]["Cube"][0]["Cube"]
-//                }
-//
-//            });
-//
-//
-//        }
-//        else {
-//            throw new Error(error);
-//        }
-//    });
-//
-//}
+class requestDriver {
+    constructor() {
+        this.subscribed = true;
+    }
+
+    subscribe(url, cb) {
+        let timer,
+            data;
+
+        (cb) ? cb() : null;
+
+        data = request(url, (error, response, body) => {
+            if (!error && response.statusCode == 200) {
+
+                timer = setTimeout(() => this.subscribe(url, cb), 5000);
+
+                if (this.subscribed == false) {
+                    clearTimeout(timer);
+                }
+                if (cb) {
+                    cb(body, (err, result) => {
+                        //console.log(util.inspect(result["gesmes:Envelope"]["Cube"][0]["Cube"][0]["Cube"], false, null));
+                        return result;
+                    });
+                }else{
+                    return JSON.parse(body);
+                    // TODO Make function return preferred format and restart subscritpion
+                }
 
 
+
+            }
+            else {
+                throw new Error(error);
+            }
+
+        });
+
+        return data;
+    }
+
+    unsubscribe() {
+        this.subscribed = false;
+    }
+}
+
+let driver = new requestDriver();
+
+//driver.subscribe(options.urlOER);
 
 module.exports = function (io) {
+    // TODO Desired options
+    io.on('connection', (socket) => {
+        socket.emit('serverStatus', {message: 'Connected to server'});
+        //socket.emit('data', {data: data, message: "Hello there my fellow friend!"});
+        //console.log('user connected');
+        //socket.on('subscribe', (data) => {
+        //    socket.emit('currency', {data: data, updateTime: moment().format()});
+        //});
+    });
 
-    //getContent(options.urlECB);
+    io.on('currency', (socket) => {
+        let data = driver.subscribe(options.urlECB, parseString);
+        socket.emit('data', {data: data, message: 'Updating currency...'})
+    });
 
+    io.on('locationChanged', (socket) => {
+        driver.unsubscribe();
+    });
 
-    //io.on('connection', (socket) => {
-    //    //socket.emit('data', {data: data, message: "Hello there my fellow friend!"});
-    //    console.log('user connected');
-    //    socket.on('subscribe', (data) => {
-    //        socket.emit('currency', {data: data, updateTime: moment().format()});
-    //    });
-    //});
-    //
-    //io.on('disconnect', (socket) => {
-    //
-    //    socket.emit('message', {message: 'Connection Closed'});
-    //});
+    io.on('disconnect', (socket) => {
+        socket.emit('serverStatus', {message: 'Disconnected from server'});
+        driver.unsubscribe()
+    });
 };
