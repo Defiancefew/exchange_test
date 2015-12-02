@@ -12,6 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "angular-messages": "^1.4.8",
+    "animate.css": "^3.4.0",
     "bcrypt": "^0.8.5",
     "bcrypt-nodejs": "0.0.3",
     "jwt-simple": "^0.3.1",

@@ -2,8 +2,11 @@ import 'angular';
 import 'angular-ui-router';
 import 'angular-messages';
 import moment from 'moment';
+import 'animate.css/animate.css';
+import '../sass/style.sass';
 
 import routes from "./routes";
+import alert from './alert';
 
 import header from "./components/header/header.js";
 import config from "./components/config/config.js";
@@ -22,6 +25,7 @@ angular.module('myApp', ['ui.router','ngMessages'])
     .config(routes)
     .constant('API_URL', 'http://localhost:3001/')
     .controller('logoutController',logoutController)
+    .service('alert',alert)
     .factory('loginFactory', loginFactory)
     .factory('currencyFactory',currencyFactory)
     .factory('loginInterceptor', loginInterceptor)

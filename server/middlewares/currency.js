@@ -14,45 +14,37 @@ let options = {
     urlCUR: 'http://currency-api.appspot.com/api/USD/EUR.json'
 };
 
-function getContent(url) {
-    request(url, (error, response, body) => {
-        if (!error && response.statusCode == 200) {
-            parseString(body,(err,result)=>{
-                //console.log(util.inspect(result["gesmes:Envelope"]["Cube"][0]["Cube"][0]["Cube"], false, null));
-                let time = moment().format('MMMM Do YYYY, h:mm:ss a');
-                console.log("Everything is okay",time);
-                let timer = setTimeout(() => getContent(options.urlECB),8000);
+//function getContent(url) {
+//    request(url, (error, response, body) => {
+//        if (!error && response.statusCode == 200) {
+//            parseString(body, (err, result)=> {
+//                //console.log(util.inspect(result["gesmes:Envelope"]["Cube"][0]["Cube"][0]["Cube"], false, null));
+//                let time = moment().format('MMMM Do YYYY, h:mm:ss a');
+//                    //timer = setTimeout(() => getContent(options.urlECB), 8000);
+//                console.log("Everything is okay", time);
+//                return {
+//                    unsubscribe(){
+//                        clearTimeout(timer)
+//                    },
+//                    data: result["gesmes:Envelope"]["Cube"][0]["Cube"][0]["Cube"]
+//                }
+//
+//            });
+//
+//
+//        }
+//        else {
+//            throw new Error(error);
+//        }
+//    });
+//
+//}
 
-                return {
-                    unsubscribe(){
-                        clearTimeout(timer)
-                    },
-                    data: result["gesmes:Envelope"]["Cube"][0]["Cube"][0]["Cube"]
-                }
-            });
-        }
-        else {
-            throw new Error(error);
-        }
-    });
 
-}
 
-function timer(content, time) {
-
-}
-
-function unsubscribe() {
-
-}
-
-module.exports = function(io){
+module.exports = function (io) {
 
     //getContent(options.urlECB);
-
-    //let data = getContent(options.urlECB);
-    //    data.unsubscribe();
-
 
 
     //io.on('connection', (socket) => {
