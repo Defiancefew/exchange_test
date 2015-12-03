@@ -20,6 +20,7 @@ app.post('/config', (req, res) => {
 });
 
 app.get('/currency', (req, res) => {
+    // TODO Bugfix: Block user apikey send when logged out
     let payload = auth.tokenCheck(req, res);
     User.findOne({_id: payload.sub}, (err, user)=> {
         if (err) {

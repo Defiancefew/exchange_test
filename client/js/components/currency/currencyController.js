@@ -8,5 +8,7 @@ export default function ($http, API_URL,socketFactory,alert) {
         }).error(function (err) {
             vm.alert = alert('Red','Oops','Something went wrong');
         })
-    }
+    };
+
+    socketFactory.init();
 }
