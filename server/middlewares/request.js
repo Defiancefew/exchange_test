@@ -3,7 +3,7 @@
 let request = require('request'),
     parseString = require('xml2js').parseString;
 
-    module.exports = class requestDriver {
+module.exports = class requestDriver {
 
     constructor() {
         this.subscribed = true;
@@ -26,17 +26,24 @@ let request = require('request'),
                 }
                 if (parse) {
                     parseString(body, (err, result) => {
-                        //console.log(util.inspect(result["gesmes:Envelope"]["Cube"][0]["Cube"][0]["Cube"], false, null));
-                        socket.emit('currency', {result: result["gesmes:Envelope"]["Cube"][0]["Cube"][0]["Cube"], message: 'Successfully parsed XML currency file!'});
+                        let data = result["gesmes:Envelope"]["Cube"][0]["Cube"][0]["Cube"];
+                        socket.emit('currency', {
+                            urlInfo: url,
+                            data,
+                            message: 'Successfully parsed XML currency file!'
+                        });
                     });
                 } else {
-                    socket.emit('currency', {result: JSON.parse(body), message: 'Successfully parsed JSON file!'});
+                    let data = JSON.parse(body);
+                    socket.emit('currency', {
+                        urlInfo: url,
+                        data,
+                        message: 'Successfully parsed JSON file!'});
                 }
             }
             else {
                 throw new Error(error);
             }
-
         });
 
         return data;
@@ -46,7 +53,7 @@ let request = require('request'),
         this.subscribed = false;
     }
 
-    static init(){
+    static init() {
         return new requestDriver();
     }
 };

@@ -1,8 +1,8 @@
-export default function(loginFactory,$log){
+export default function(tokenFactory,$log){
     let vm = this;
 
     vm.isAuthenticated = function () {
-        return loginFactory.isAuthenticated();
+        return tokenFactory.isAuthenticated();
     };
 
 }

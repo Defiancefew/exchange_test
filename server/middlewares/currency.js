@@ -6,6 +6,8 @@ let app = require('express')(),
 
     requestDriver = require('./request').init();
 
+// TODO Remove hardcoded options
+
 let options = {
     urlOER: ['https://openexchangerates.org/api/latest.json?app_id=d4f7a49c4d5842feb302f37549c768f9', false],
     urlECB: ['http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml',true],
@@ -13,7 +15,9 @@ let options = {
 };
 
 module.exports = function (io) {
+
     // TODO Desired options
+
     io.on('connection', (socket) => {
 
         console.log('user connected');

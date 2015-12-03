@@ -1,17 +1,15 @@
-export default function ($http,loginFactory,API_URL,$log,$state) {
+export default function ($http,API_URL,$log,$state,authFactory,alert) {
     let vm = this;
-
-    let url = API_URL + 'register';
 
     vm.user = {};
 
     vm.submit = function () {
-        $http.post(url, vm.user).success((res)=> {
+        authFactory.register(vm.user).success((res)=> {
             $log.debug(res);
-            $state.go('currency');
-            loginFactory.setToken(res.token);
+            vm.alert = alert('Success','You\'ve successfully registered!',`Welcome ${vm.email}`);
         }).error((err)=> {
             $log.debug(err);
+            vm.alert = alert('Error','User with this email already exists',`Specify new email`);
         })
     }
 }

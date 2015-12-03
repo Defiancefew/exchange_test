@@ -1,7 +1,7 @@
-export default function(loginFactory){
+export default function(tokenFactory){
   return {
       request(config){
-          let token = loginFactory.getToken();
+          let token = tokenFactory.getToken();
 
           if(token){
               config.headers.Authorization = 'Bearer ' + token;

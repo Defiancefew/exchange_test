@@ -3,6 +3,10 @@ export default function ($stateProvider, $urlRouterProvider, $logProvider, $http
     $urlRouterProvider.otherwise('/');
 
     $stateProvider
+        .state('main',{
+            url: '/',
+            template: '<div>main title</div>'
+        })
         .state('login', {
             url: '/login',
             template: '<login></login>'

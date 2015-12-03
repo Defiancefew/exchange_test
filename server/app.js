@@ -6,9 +6,9 @@ let app = require('express')(),
     path = require('path'),
     util = require('util'),
     bodyParser = require('body-parser'),
-    passport = require('passport'),
     morgan = require('morgan'),
     fs = require('fs'),
+    passport = require('passport'),
 
     auth = require('./middlewares/auth.js'),
     currency = require('./middlewares/currency.js')(io),
@@ -19,8 +19,20 @@ passport.serializeUser((user, done) => done(null, user.id));
 passport.use('local-register', auth.registerStrategy);
 passport.use('local-login', auth.loginStrategy);
 
+app.use(morgan('dev', {stream: logger}));
+app.use(passport.initialize());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-type, Authorization');
+
+    next();
+});
+
 app.use(require('./routes.js'));
-app.use(require('./config.js'));
 
 server.listen(port, (err) => {
 
@@ -28,4 +40,3 @@ server.listen(port, (err) => {
     console.log(`Listening on localhost ${port}`);
 
 });
-

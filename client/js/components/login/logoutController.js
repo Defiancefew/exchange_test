@@ -1,4 +1,4 @@
-export default function(loginFactory,$state){
-  loginFactory.removeToken();
+export default function(tokenFactory,$state){
+  tokenFactory.removeToken();
     $state.go('login');
 }
