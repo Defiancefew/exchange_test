@@ -2,8 +2,21 @@ import 'angular';
 import 'angular-ui-router';
 import 'angular-socket-io';
 import 'angular-messages';
+
+//import bootstrap from "bootstrap-webpack";
+//import 'angular-aria';
+//import 'angular-animate';
+//import 'angular-material';
+//import 'angular-material/angular-material.css';
 import moment from 'moment';
 import 'animate.css/animate.css';
+
+import $ from 'jquery';
+//import 'bootstrap';
+import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap/dist/css/bootstrap-theme.css";
+
+
 import '../sass/style.sass';
 
 import routes from "./components/helpers/routes";

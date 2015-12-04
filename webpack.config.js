@@ -14,7 +14,8 @@ module.exports = {
     },
     module: {
         loaders: [
-            //{test: /bootstrap\/js\//, loader: 'imports?jQuery=jquery'},
+            { test: /bootstrap\/js\//, loader: 'imports?jQuery=jquery' },
+            //{ test: /bootstrap-sass\/assets\/javascripts\//, loader: 'imports?jQuery=jquery' },
             {test: /\.html$/, exclude: /node_modules/, loader: 'raw'},
             {test: /\.css$/, loader: 'style-loader!css-loader' },
             {test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/, include: path.join(__dirname, './client/js')},
@@ -22,6 +23,7 @@ module.exports = {
 
             //{test: /\.jsx?$/, exclude: /(node_modules|bower_components)/, loader: 'react-hot!babel' },
             {test: /\.sass$/, exclude: /node_modules/, loader: ExtractTextPlugin.extract('style', 'css!autoprefixer?browsers=last 2 versions!sass?indentedSyntax')},
+            {test: /\.scss$/, exclude: /node_modules/, loader: ExtractTextPlugin.extract('style', 'css!autoprefixer?browsers=last 2 versions!sass?outputStyle=expanded')},
             {test: /\.less$/, exclude: /node_modules/, loader: 'style!css!less'},
             {test: /\.jade$/, exclude: /node_modules/, loader: "jade"},
 

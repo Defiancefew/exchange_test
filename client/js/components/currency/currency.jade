@@ -1,11 +1,15 @@
 .container
-    h1 Server status
-    button Get Currency
-    div {{currency.data[1][0][$][currency]}}
-
-    //div(class="animated alert" ng-class="{'fadeIn': currency.alert.show,'fadeOut': !currency.alert.show, 'alert-hidden': !currency.alert.hasBeenShown}" ng-cloak)
-    //    div {{currency.alert.title}}
-    //    div {{currency.alert.message}}
-    //div {{currency.data[2] | json}}
-    //div {{currency.data[0] | json}}
-
+    .row
+        .col-md-12
+            h1 Server status
+            button.btn.btn-success Get Currency
+            div(ng-repeat="curr in currency.xml") {{curr.currency}} {{curr.rate}}
+            table
+                tr
+                    th one
+                    th two
+                    th three
+                tr
+                    td asdasdasd
+                    td asdasdasd
+                    td asdasdasd
