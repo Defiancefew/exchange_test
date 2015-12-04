@@ -1,5 +1,6 @@
 import 'angular';
 import 'angular-ui-router';
+import 'angular-socket-io';
 import 'angular-messages';
 import moment from 'moment';
 import 'animate.css/animate.css';
@@ -21,7 +22,7 @@ import loginInterceptor from './components/login/loginInterceptor.js';
 import currencyFactory from './components/currency/currencyFactory.js';
 import currency from './components/currency/currency.js';
 
-angular.module('myApp', ['ui.router', 'ngMessages'])
+angular.module('myApp', ['ui.router', 'ngMessages', 'btford.socket-io'])
     .config(routes)
     .constant('API_URL', 'http://localhost:3001/')
     .controller('logoutController', logoutController)

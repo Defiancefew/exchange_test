@@ -1,6 +1,7 @@
 "use strict";
 
 let request = require('request'),
+    util = require('util'),
     parseString = require('xml2js').parseString;
 
 module.exports = class requestDriver {
@@ -27,6 +28,7 @@ module.exports = class requestDriver {
                 if (parse) {
                     parseString(body, (err, result) => {
                         let data = result["gesmes:Envelope"]["Cube"][0]["Cube"][0]["Cube"];
+                        //console.log(util.inspect(result["gesmes:Envelope"]["Cube"][0]["Cube"][0]["Cube"], false, null));
                         socket.emit('currency', {
                             urlInfo: url,
                             data,
