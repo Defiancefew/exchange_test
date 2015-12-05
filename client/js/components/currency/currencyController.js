@@ -5,7 +5,12 @@ export default function ($http, API_URL, currencyFactory, alert) {
     currencyFactory.on('status', (status) => vm.status = status.online);
 
     currencyFactory.on('currency', data => {
-        console.log(data);
+        console.log(data[0]['data']);
+        
+
+        vm.xml = data[1]['data'];
+        //console.log(data[1]['data']);
+        //console.log(data[2]['data']);
     });
 
 }

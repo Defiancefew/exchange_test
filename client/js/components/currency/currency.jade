@@ -8,8 +8,6 @@
                 tr
                     th one
                     th two
-                    th three
-                tr
-                    td asdasdasd
-                    td asdasdasd
-                    td asdasdasd
+                tr(ng-repeat="cur in currency.xml")
+                    td {{cur.currency}}
+                    td {{cur.rate}}

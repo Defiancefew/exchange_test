@@ -21,7 +21,7 @@ module.exports = function (io) {
             Promise.all([requestDriver(options.OER.url,options.OER.parseXML),
                 requestDriver(options.ECB.url,options.ECB.parseXML),
                 requestDriver(options.CUR.url,options.CUR.parseXML)]).then((data) =>{
-                socket.emit('currency',{data});
+                socket.emit('currency',data);
             });
         //}, 5000);
 
