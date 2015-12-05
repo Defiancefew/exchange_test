@@ -225,3 +225,4 @@ lib
 src/sass/bourbon
 src/lib
 _design
+*.log
