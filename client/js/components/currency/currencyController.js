@@ -3,34 +3,7 @@ export default function ($http, API_URL, socketService, alert, tokenFactory,curr
     let vm = this;
 
     vm.subscription = true;
-
     vm.message = "Cancel subscription";
-
-    socketService.on('currency', data => {
-
-        vm.EXF = _.map(data[0].data, (v, k) => {
-            return {[v.currency]: v.rate};
-        });
-
-        vm.CUR = {[data[1].data.target] : data[1].data.rate};
-
-        let keys = _.keys(data[2].data.rates),
-            values = _.values(data[2].data.rates),
-            array = [];
-
-        for (let i = 0; i < keys.length; i++) {
-            array[i] = {[keys[i]]: values[i]}
-        }
-
-        vm.OER = array;
-
-        console.log(vm.EXF);
-        console.log(vm.CUR);
-        console.log(vm.OER);
-
-        socketService.emit('unsubscribe');
-    });
-
     vm.toggle = () => {
 
         if (vm.subscription) {
@@ -51,6 +24,7 @@ export default function ($http, API_URL, socketService, alert, tokenFactory,curr
         }
     };
 
+
     socketService.on('status', (status) => {
         vm.status = status;
 
@@ -61,6 +35,34 @@ export default function ($http, API_URL, socketService, alert, tokenFactory,curr
             socketService.emit('subscribe', '');
             vm.checkApiKey = false;
         }
+
+        socketService.on('currency', data => {
+
+            vm.EXF = data[0].data;
+
+            //vm.EXF = _.map(data[0].data, (v, k) => {
+            //    return {[v.currency]: v.rate};
+            //});
+
+            vm.CUR = {currency: data[1].data.target , rate: data[1].data.rate};
+
+            let keys = _.keys(data[2].data.rates),
+                values = _.values(data[2].data.rates),
+                array = [];
+
+            for (let i = 0; i < keys.length; i++) {
+                array[i] = {currency: keys[i], rate: values[i]};
+            }
+
+            vm.OER = array;
+
+            console.log(vm.EXF);
+            console.log(vm.CUR);
+            console.log(vm.OER);
+
+            socketService.emit('unsubscribe');
+        });
+
 
     });
 
