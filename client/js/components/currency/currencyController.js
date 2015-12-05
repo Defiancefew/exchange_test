@@ -29,8 +29,8 @@ export default function ($http, API_URL, socketService, alert, tokenFactory,curr
         vm.status = status;
 
         if (!!tokenFactory.getApi()) {
-            vm.checkApiKey = true;
             socketService.emit('subscribe', tokenFactory.getApi());
+            vm.checkApiKey = true;
         } else {
             socketService.emit('subscribe', '');
             vm.checkApiKey = false;
@@ -44,7 +44,7 @@ export default function ($http, API_URL, socketService, alert, tokenFactory,curr
             //    return {[v.currency]: v.rate};
             //});
 
-            vm.CUR = {currency: data[1].data.target , rate: data[1].data.rate};
+            vm.CUR = [{currency: data[1].data.target , rate: data[1].data.rate}];
 
             let keys = _.keys(data[2].data.rates),
                 values = _.values(data[2].data.rates),
