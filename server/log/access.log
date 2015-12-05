@@ -70,3 +70,5 @@
 [0mOPTIONS /login [32m200 [0m0.246 ms - 4[0m
 [0mPOST /login [32m200 [0m164.098 ms - 262[0m
 [0mPOST /login [32m200 [0m159.286 ms - 262[0m
+[0mOPTIONS /login [32m200 [0m3.158 ms - 4[0m
+[0mPOST /login [32m200 [0m185.684 ms - 262[0m

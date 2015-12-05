@@ -5,7 +5,7 @@ export default function ($stateProvider, $urlRouterProvider, $logProvider, $http
     $stateProvider
         .state('main',{
             url: '/',
-            template: '<div>main title</div>'
+            template: '<main></main>'
         })
         .state('login', {
             url: '/login',
