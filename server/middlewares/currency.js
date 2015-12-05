@@ -5,48 +5,63 @@ let app = require('express')(),
     _ = require('lodash'),
     io = require('socket.io')(server),
 
-    requestDriver = require('./request').init();
-
-// TODO Remove hardcoded options
+    requestDriver = require('./request');
 
 let options = {
-    OER: {
-        url: 'https://openexchangerates.org/api/latest.json?app_id=d4f7a49c4d5842feb302f37549c768f9',
-        parseXML: false
-    },
+    OER: {url: 'https://openexchangerates.org/api/latest.json?app_id=d4f7a49c4d5842feb302f37549c768f9', parseXML: false},
     ECB: {url: 'http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml', parseXML: true},
     CUR: {url: 'http://currency-api.appspot.com/api/USD/EUR.json', parseXML: false}
 };
 
 module.exports = function (io) {
 
-    // TODO Desired options
-
     io.on('connection', (socket) => {
-
         console.log('user connected');
-        socket.emit('status', {online: true});
         //setInterval(() =>{
-        //    Promise.all([requestDriver.subscribe(options.OER.url,options.OER.parseXML),
-        //        requestDriver.subscribe(options.ECB.url,options.ECB.parseXML),
-        //        requestDriver.subscribe(options.CUR.url,options.CUR.parseXML)]).then((data) =>{
-        //        socket.emit('currency',{data});
-        //    });
-        //}, 5000);
-        Promise.all([requestDriver.subscribe(options.OER.url,options.OER.parseXML),
-                requestDriver.subscribe(options.ECB.url,options.ECB.parseXML),
-                requestDriver.subscribe(options.CUR.url,options.CUR.parseXML)]).then((data) =>{
+            Promise.all([requestDriver(options.OER.url,options.OER.parseXML),
+                requestDriver(options.ECB.url,options.ECB.parseXML),
+                requestDriver(options.CUR.url,options.CUR.parseXML)]).then((data) =>{
                 socket.emit('currency',{data});
             });
+        //}, 5000);
 
-
-        //requestDriver.subscribe(options.OER.url, options.OER.parseXML).then((data) => {
-        //    socket.emit('currency', data.data);
-        //});
     });
-    //requestDriver.unsubscribe();
+
 
 };
+
+let newer = [{'$': {currency: 'USD', rate: '1.0671'}},
+    {'$': {currency: 'JPY', rate: '131.58'}},
+    {'$': {currency: 'BGN', rate: '1.9558'}},
+    {'$': {currency: 'CZK', rate: '27.036'}},
+    {'$': {currency: 'DKK', rate: '7.4584'}},
+    {'$': {currency: 'GBP', rate: '0.71220'}},
+    {'$': {currency: 'HUF', rate: '310.93'}},
+    {'$': {currency: 'PLN', rate: '4.2859'}},
+    {'$': {currency: 'RON', rate: '4.4585'}},
+    {'$': {currency: 'SEK', rate: '9.2250'}},
+    {'$': {currency: 'CHF', rate: '1.0840'}},
+    {'$': {currency: 'NOK', rate: '9.1740'}},
+    {'$': {currency: 'HRK', rate: '7.6358'}},
+    {'$': {currency: 'RUB', rate: '72.2652'}},
+    {'$': {currency: 'TRY', rate: '3.0768'}},
+    {'$': {currency: 'AUD', rate: '1.4550'}},
+    {'$': {currency: 'BRL', rate: '4.0476'}},
+    {'$': {currency: 'CAD', rate: '1.4213'}},
+    {'$': {currency: 'CNY', rate: '6.8273'}},
+    {'$': {currency: 'HKD', rate: '8.2701'}},
+    {'$': {currency: 'IDR', rate: '14733.44'}},
+    {'$': {currency: 'ILS', rate: '4.1291'}},
+    {'$': {currency: 'INR', rate: '71.1343'}},
+    {'$': {currency: 'KRW', rate: '1240.24'}},
+    {'$': {currency: 'MXN', rate: '17.6658'}},
+    {'$': {currency: 'MYR', rate: '4.5088'}},
+    {'$': {currency: 'NZD', rate: '1.6038'}},
+    {'$': {currency: 'PHP', rate: '50.269'}},
+    {'$': {currency: 'SGD', rate: '1.5010'}},
+    {'$': {currency: 'THB', rate: '38.263'}},
+    {'$': {currency: 'ZAR', rate: '15.2736'}}];
+
 
 //let ratesssss = {
 //    disclaimer: '123',
