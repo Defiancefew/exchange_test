@@ -1,13 +1,17 @@
 .container
     .row
         .col-md-12
-            h1 Server status
-            button.btn.btn-success Get Currency
-            div(ng-repeat="curr in currency.xml") {{curr.currency}} {{curr.rate}}
-            table
+            h1 Server status : {{currency.status}}
+            button(ng-class="{'btn-success':!currency.subscription,'btn-danger':currency.subscription}").btn(ng-click="currency.toggle()") {{currency.message}}
+            hr
+            table.table.table-striped
                 tr
-                    th one
-                    th two
-                tr(ng-repeat="cur in currency.xml")
-                    td {{cur.currency}}
-                    td {{cur.rate}}
+                    th Currency
+                    th EXF
+                    th CUR
+                    th(ng-if="currency.checkApiKey") OER
+                tr
+                    td {{currency.EXF[0].currency}}
+                    td {{currency.EXF[0].rate}}
+                    td {{currency.CUR.rate}}
+                    td(ng-if="currency.checkApiKey") 345

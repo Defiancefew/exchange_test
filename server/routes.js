@@ -30,7 +30,7 @@ app.get('/currency', (req, res) => {
         if (user.apiKey) {
             res.status(200).send({api: user.apiKey});
         } else {
-            res.status(404).send({message: 'Bad news everyone'});
+            res.status(404).send({message: 'You must specify your own api key in options'});
         }
     });
 });

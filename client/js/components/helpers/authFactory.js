@@ -1,5 +1,6 @@
 export default function (tokenFactory, $http, API_URL, $state) {
     function authSuccessfull(res) {
+        tokenFactory.setApi(res.user.apiKey);
         tokenFactory.setToken(res.token);
         $state.go('main');
     }
@@ -15,5 +16,5 @@ export default function (tokenFactory, $http, API_URL, $state) {
             email,
             password
         }).success(authSuccessfull);
-    }
+    };
 }

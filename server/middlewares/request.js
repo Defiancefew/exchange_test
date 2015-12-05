@@ -4,8 +4,8 @@ let request = require('request'),
     _ = require('lodash'),
     parseString = require('xml2js').parseString;
 
-module.exports = function (url, parseXML) {
-        let parse = parseXML || false;
+exports.request = function (url, parseXML) {
+    let parse = parseXML || false;
 
     return new Promise((resolve, reject) => {
         request(url, (error, response, body) => {
@@ -35,5 +35,17 @@ module.exports = function (url, parseXML) {
                 reject(error);
             }
         });
+    });
+};
+
+exports.process = function (options, socket) {
+    let mapper = options.map((k)=> {
+        return exports.request(k[0], k[1])
+    });
+
+    return Promise.all(mapper).then(data => {
+
+        socket.emit('currency', data);
+
     });
 };

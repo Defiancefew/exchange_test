@@ -45,7 +45,7 @@ exports.registerStrategy = new LocalStrategy(strategyOptions, function (email, p
             var newUser = new User({
                 email: email,
                 password: password,
-                apiKey: null
+                apiKey: ''
             });
 
             newUser.save(function (err) {

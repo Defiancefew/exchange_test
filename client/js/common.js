@@ -12,7 +12,6 @@ import moment from 'moment';
 import 'animate.css/animate.css';
 
 import $ from 'jquery';
-//import 'bootstrap';
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/css/bootstrap-theme.css";
 
@@ -23,6 +22,7 @@ import routes from "./components/helpers/routes";
 import alert from './components/helpers/alert';
 import tokenFactory from './components/helpers/tokenFactory.js';
 import authFactory from './components/helpers/authFactory.js';
+import socketService from './components/helpers/socketService.js';
 
 import header from "./components/header/header.js";
 import config from "./components/config/config.js";
@@ -32,8 +32,8 @@ import login from './components/login/login.js';
 import logoutController from './components/login/logoutController.js';
 import loginInterceptor from './components/login/loginInterceptor.js';
 
-import currencyFactory from './components/currency/currencyFactory.js';
 import currency from './components/currency/currency.js';
+import currencyFactory from './components/currency/currencyFactory.js';
 
 angular.module('myApp', ['ui.router', 'ngMessages', 'btford.socket-io'])
     .config(routes)
@@ -42,8 +42,9 @@ angular.module('myApp', ['ui.router', 'ngMessages', 'btford.socket-io'])
     .service('alert', alert)
     .factory('loginInterceptor', loginInterceptor)
     .factory('tokenFactory', tokenFactory)
-    .service('authFactory', authFactory)
     .factory('currencyFactory', currencyFactory)
+    .service('authFactory', authFactory)
+    .factory('socketService', socketService)
     .directive('header', header)
     .directive('register', register)
     .directive('login', login)
@@ -51,6 +52,8 @@ angular.module('myApp', ['ui.router', 'ngMessages', 'btford.socket-io'])
     .directive('config', config)
 ;
 
+
 /* TODO Ng messages validation
  TODO Moment JS
  */
+

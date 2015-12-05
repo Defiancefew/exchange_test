@@ -9,5 +9,5 @@ ul
         a(ui-sref="login" ui-sref-active="active") Login
     li(ng-show="header.isAuthenticated()")
         a(ui-sref="config" ui-sref-active="active") Config
-    li
+    li(ng-show="header.isAuthenticated()")
         a(ui-sref="currency" ui-sref-active="active") Currency

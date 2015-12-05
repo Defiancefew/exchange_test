@@ -1,13 +1,16 @@
-import io from 'socket.io-client';
+import _ from 'lodash';
 
-export default function (API_URL,socketFactory) {
+export default function(socketService){
+    let socketFactory = {};
 
-    var mySocket;
+    socketFactory.getCurrency = function() {
 
-    mySocket = socketFactory({
-        ioSocket: io.connect(API_URL)
-    });
+        let currency;
 
-    return mySocket;
+
+        return currency;
+    };
+
+    return socketFactory;
 
 }

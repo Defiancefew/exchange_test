@@ -1,7 +1,9 @@
 export default function ($window) {
     let storage = $window.localStorage,
         cachedToken,
-        userToken = 'userToken';
+        apiToken,
+        userToken = 'userToken',
+        api = 'apiKey';
 
     return {
         setToken(token){
@@ -19,7 +21,19 @@ export default function ($window) {
         },
         removeToken(){
             cachedToken = null;
+            apiToken = null;
             storage.removeItem(userToken);
+            storage.removeItem(api);
+        },
+        setApi(apiKey){
+            apiToken = apiKey;
+            storage.setItem(api,apiKey);
+        },
+        getApi(){
+            if(!apiToken){
+                apiToken = storage.getItem(api);
+            }
+            return apiToken;
         }
     };
 }
