@@ -13,6 +13,7 @@ exports.request = function (url, parseXML) {
             if (!error && response.statusCode == 200) {
 
                 if (parse) {
+
                     parseString(body, (err, result) => {
                         if (err) reject(err);
 
