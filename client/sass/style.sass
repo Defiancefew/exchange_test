@@ -1,13 +1,8 @@
-=font-face($family, $path)
-  @font-face
-  font-family: $family
-  src: url('#{$path}.eot')
-  src: url('#{$path}.eot?#iefix') format('embedded-opentype'), url('#{$path}.woff2') format('woff2'),url('#{$path}.woff') format('woff'),url('#{$path}.ttf')  format('truetype'),url('#{$path}.svg#svgFontName') format('svg')
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak
+  display: none !important
 
-
-+font-face('OpenSans-Bold','../fonts/OpenSans-Bold')
-+font-face('OpenSans-Regular','../fonts/OpenSans-Regular')
-
+body
+  font-family: 'OpenSans-Regular'
 
 li
   list-style: none
@@ -36,19 +31,6 @@ input[type="checkbox"]
 
 .active
   background: cornflowerblue
-//button
-//  display: inline-block
-//  padding: 0 10px
-//  outline: none
-//  background: mediumpurple
-//  height: 30px
-//  text-align: center
-//  line-height: 30px
-//  border: none
-//  font-size: 18px
-
-[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak
-  display: none !important
 
 .alert
   display: block
