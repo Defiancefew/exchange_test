@@ -40,8 +40,9 @@ exports.request = function (url, parseXML) {
 };
 
 exports.process = function (options, socket) {
-    let mapper = options.map((k)=> {
-        return exports.request(k[0], k[1])
+
+    let mapper = _.map(options,(k,v)=>{
+       return exports.request(k.url,k.parse);
     });
 
     return Promise.all(mapper).then(data => {
