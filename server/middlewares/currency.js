@@ -11,20 +11,10 @@ let app = require('express')(),
 
 // TODO Refactor options + request different currency from appspot
 
-//let options = [{ECB: {url: 'http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml', parseXML: true}},
-//    {CUR: {url: 'http://currency-api.appspot.com/api/USD/EUR.json', parseXML: false}}
-//];
-
-//let options = [
-//    ['http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml', true],
-//    ['http://currency-api.appspot.com/api/USD/EUR.json', false]
-//];
-
 let options = {
     EXF: {url: 'http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml', parse: true},
     APP: {url: 'http://currency-api.appspot.com/api/USD/EUR.json', parse: false}
 };
-
 
 // d4f7a49c4d5842feb302f37549c768f9
 

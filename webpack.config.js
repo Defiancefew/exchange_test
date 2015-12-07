@@ -22,7 +22,7 @@ module.exports = {
             {test: /\.json$/, exclude: /node_modules/, loader: "json"},
 
             //{test: /\.jsx?$/, exclude: /(node_modules|bower_components)/, loader: 'react-hot!babel' },
-            {test: /\.sass$/, exclude: /node_modules/, loader: ExtractTextPlugin.extract('style', 'css?sourceMap!autoprefixer?browsers=last 2 versions!resolve-url!sass?indentedSyntax=true')},
+            {test: /\.sass$/, exclude: /node_modules/, loader: ExtractTextPlugin.extract('style', 'css!autoprefixer?browsers=last 2 versions!resolve-url!sass?indentedSyntax=true&sourcemap=true')},
             //{test: /\.scss$/, exclude: /node_modules/, loader: ExtractTextPlugin.extract('style', 'css!autoprefixer?browsers=last 2 versions!resolve-url!sass?sourceMap')},
             {test: /\.less$/, exclude: /node_modules/, loader: 'style!css!resolve-url!less'},
             {test: /\.jade$/, exclude: /node_modules/, loader: "jade"},

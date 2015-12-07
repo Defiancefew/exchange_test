@@ -19,7 +19,7 @@ import './components/helpers';
 import './components/login';
 import './components/register';
 
-import '../css/fonts.css';
+//import '../css/fonts.css';
 import '../sass/style.sass';
 
 
