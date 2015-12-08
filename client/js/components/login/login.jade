@@ -1,11 +1,11 @@
 .container
     .row
-        .col-md4.col-md-offset-4
+        .col-md-4.col-md-offset-4
             .login__row
                 h1.login__title Login!
                 form(ng-submit="login.submit()")
-                    input.login__input(type="email" ng-model="login.user.email")
-                    input.login__input(type="password" ng-model="login.user.password")
+                    input.form-control.login__input(type="email" ng-model="login.user.email")
+                    input.form-control.login__input(type="password" ng-model="login.user.password")
                     button.login__submit.btn.btn-primary Login
                 div(class="animated alert" ng-class="{'fadeInDown': login.alert.show,'fadeOut': !login.alert.show, 'alert-hidden': !login.alert.hasBeenShown}" ng-cloak)
                     div {{login.alert.title}}

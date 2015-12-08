@@ -3,19 +3,9 @@
         .col-md-12
             h1 Server status : {{currency.status}}
             button(ng-class="{'btn-success':!currency.subscription,'btn-danger':currency.subscription}").btn(ng-click="currency.toggle()") {{currency.message}}
+            h2 Base currency: EUR
             hr
-            //table.table.table-striped
-            //    tr
-            //        th Currency
-            //        th EXF
-            //        th CUR
-            //        th(ng-if="currency.checkApiKey") OER
-            //    tr
-            //        td {{currency.EXF[0].currency}}
-            //        td {{currency.EXF[0].rate}}
-            //        td {{currency.CUR.rate}}
-            //        td(ng-if="currency.checkApiKey") 345
-            h2 Eurofxref
+            h3 Eurofxref
             table.table.table-striped
                 tr
                     th Currency
@@ -23,7 +13,7 @@
                 tr(ng-repeat="cur in currency.EXF")
                     td {{cur.currency}}
                     td {{cur.rate}}
-            h2 Open Exchange Rates
+            h3 Open Exchange Rates
             table.table.table-striped
                 tr
                     th Currency
@@ -31,11 +21,11 @@
                 tr(ng-repeat="cur in currency.OER")
                     td {{cur.currency}}
                     td {{cur.rate}}
-            h2 Appspot
+            h3 Appspot
             table.table.table-striped
                 tr
                     th Currency
                     th Rate
-                tr(ng-repeat="cur in currency.CUR")
-                    td {{cur.currency}}
+                tr(ng-repeat="cur in currency.APP")
+                    td {{cur.source}}
                     td {{cur.rate}}

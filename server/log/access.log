@@ -92,3 +92,15 @@
 [0mPOST /login [32m200 [0m157.571 ms - 262[0m
 [0mOPTIONS /config [32m200 [0m4.862 ms - 4[0m
 [0mPOST /config [32m200 [0m302.137 ms - 27[0m
+[0mOPTIONS /login [32m200 [0m3.068 ms - 4[0m
+[0mPOST /login [32m200 [0m796.265 ms - 262[0m
+[0mOPTIONS /login [32m200 [0m0.734 ms - 4[0m
+[0mPOST /login [32m200 [0m159.884 ms - 262[0m
+[0mOPTIONS /login [32m200 [0m0.365 ms - 4[0m
+[0mPOST /login [32m200 [0m158.185 ms - 262[0m
+[0mOPTIONS /config [32m200 [0m2.704 ms - 4[0m
+[0mPOST /config [32m200 [0m240.331 ms - 27[0m
+[0mOPTIONS /config [32m200 [0m0.563 ms - 4[0m
+[0mPOST /config [32m200 [0m2.323 ms - 27[0m
+[0mOPTIONS /config [32m200 [0m0.206 ms - 4[0m
+[0mPOST /config [32m200 [0m1.264 ms - 27[0m

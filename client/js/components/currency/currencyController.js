@@ -44,7 +44,7 @@ export default function ($http, API_URL, socketService, alert, tokenFactory,curr
             //    return {[v.currency]: v.rate};
             //});
 
-            vm.CUR = [{currency: data[1].data.target , rate: data[1].data.rate}];
+            vm.APP = [{source: data[1].data.source ,currency: data[1].data.target , rate: data[1].data.rate}];
 
             let keys = _.keys(data[2].data.rates),
                 values = _.values(data[2].data.rates),
@@ -57,8 +57,8 @@ export default function ($http, API_URL, socketService, alert, tokenFactory,curr
             vm.OER = array;
 
             console.log(vm.EXF);
-            console.log(vm.CUR);
             console.log(vm.OER);
+            console.log(vm.APP);
 
             socketService.emit('unsubscribe');
         });
