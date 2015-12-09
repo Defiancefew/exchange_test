@@ -39,17 +39,13 @@ exports.request = function (url, parseXML) {
     });
 };
 
-exports.process = function (options, socket) {
+exports.process = function (options,io) {
 
     let mapper = _.map(options,(k,v)=>{
-
        return exports.request(k.url,k.parse);
-
     });
 
     return Promise.all(mapper).then(data => {
-
-        socket.emit('currency', data);
-
+        io.emit('currency',data);
     });
 };

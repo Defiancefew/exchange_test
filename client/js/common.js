@@ -10,8 +10,6 @@ import 'animate.css/animate.css';
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/css/bootstrap-theme.css";
 
-
-
 import './components/config';
 import './components/currency';
 import './components/header';
@@ -19,15 +17,13 @@ import './components/helpers';
 import './components/login';
 import './components/register';
 
-//import '../css/fonts.css';
 import '../sass/style.sass';
-
 
 angular.module('myApp', ['ui.router', 'ngMessages',
     'btford.socket-io', 'config','currency','header',
     'helpers','login','register']);
 
 /* TODO Ng messages validation
- TODO Moment JS
+   TODO Moment JS
  */
 

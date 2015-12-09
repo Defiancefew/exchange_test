@@ -38,27 +38,30 @@ export default function ($http, API_URL, socketService, alert, tokenFactory,curr
 
         socketService.on('currency', data => {
 
-            vm.EXF = data[0].data;
+            console.log(data);
+            //console.log(data);
+
+            //vm.EXF = data[0].data;
 
             //vm.EXF = _.map(data[0].data, (v, k) => {
             //    return {[v.currency]: v.rate};
             //});
 
-            vm.APP = [{source: data[1].data.source ,currency: data[1].data.target , rate: data[1].data.rate}];
+            //vm.APP = [{source: data[1].data.source ,currency: data[1].data.target , rate: data[1].data.rate}];
+            //
+            //let keys = _.keys(data[2].data.rates),
+            //    values = _.values(data[2].data.rates),
+            //    array = [];
+            //
+            //for (let i = 0; i < keys.length; i++) {
+            //    array[i] = {currency: keys[i], rate: values[i]};
+            //}
+            //
+            //vm.OER = array;
 
-            let keys = _.keys(data[2].data.rates),
-                values = _.values(data[2].data.rates),
-                array = [];
-
-            for (let i = 0; i < keys.length; i++) {
-                array[i] = {currency: keys[i], rate: values[i]};
-            }
-
-            vm.OER = array;
-
-            console.log(vm.EXF);
-            console.log(vm.OER);
-            console.log(vm.APP);
+            //console.log(vm.EXF);
+            //console.log(vm.OER);
+            //console.log(vm.APP);
 
             socketService.emit('unsubscribe');
         });

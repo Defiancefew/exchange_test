@@ -1,15 +1,14 @@
 .container
     .row
         .col-md-6.col-md-offset-3
-            form(ng-submit="config.submit()")
-                label Currency
-                    input.config__base(type="text" ng-model="config.baseValue" maxlength="3")
-                label.animated.fadeIn(for="apiKey") Yes,I want to specify my own OpenExchangeRates API key
-                    input(id="apiKey" type="checkbox" ng-model="config.options.OER.enable")
-                input.form-control.config__apikey.animated(ng-class="{'fadeInDown' : config.options.OER.enable}" ng-if="config.options.OER.enable" type="text" ng-model="config.apiKey")
-                label Enable EXF currency tracking
-                    input(type="checkbox" ng-model="config.options.EXF.enable")
-                label Enable OER currency tracking
-                    input(type="checkbox" ng-model="config.options.APP.enable")
-
+            form.config__form(ng-submit="config.submit()")
+                label(for="apiKey") Enable OpenexchangeRates currency tracking
+                    input(id="apiKey" type="checkbox" ng-model="config.enable.OER" placeholder="Specify API key")
+                input.form-control.config__apikey.animated(ng-class="{'fadeInDown' : config.enable.OER}" ng-if="config.enable.OER" type="text" ng-model="config.apiKey")
+                label(for="config__ecb") Enable Ecb.europa.eu currency tracking
+                    input(id="config__ecb" type="checkbox" ng-model="config.enable.EXF")
+                label(for="config__app") Enable Appspot currency tracking
+                    input(id="config__app" type="checkbox" ng-model="config.enable.APP" )
+                label.config__appbase(for="config__appbase" ng-if="config.enable.APP" ) Base Value
+                    input.config__base.form-control.animated(id="config__appbase" ng-class="{'fadeInDown' : config.enable.APP}" type="text" ng-model="config.baseValue" maxlength="3")
                 button.btn.btn-success.config__submit Submit

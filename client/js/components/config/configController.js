@@ -1,39 +1,60 @@
-export default function (API_URL, $http, tokenFactory, socketService,$scope) {
-    let vm = this;
+export default function (API_URL, $http, tokenFactory, socketService) {
+    var vm = this;
+
+    (!tokenFactory.getApi()) ? vm.apiKey = null : vm.apiKey = tokenFactory.getApi();
 
     vm.baseValue = 'EUR';
     vm.apiKeySubmit = false;
 
-    if (!tokenFactory.getApi()) {
-        vm.apiKey = null;
+    vm.enable = {
+        OER: false,
+        EXF: true,
+        APP: false
+    };
 
-    } else {
-        vm.apiKey = tokenFactory.getApi();
-    }
-
+    //   Remember - checkbox resets when neither "label for" nor "id" specified
 
     vm.submit = function () {
+
         vm.options = {
-            EXF: {enable: true, url: 'http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml', parse: true},
-            APP: {enable: true, url: 'http://currency-api.appspot.com/api/' + vm.baseValue + '/USD.json', parse: false},
-            OER: {enable: true, url: `https://openexchangerates.org/api/latest.json?app_id=${vm.apiKey}`, parse: false}
+            EXF: {
+                enable: vm.enable.EXF,
+                url: 'http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml',
+                parse: true
+            },
+            APP: {
+                enable: vm.enable.APP,
+                url: `http://currency-api.appspot.com/api/${vm.baseValue}/USD.json`,
+                parse: false
+            },
+            OER: {
+                enable: vm.enable.OER,
+                url: `https://openexchangerates.org/api/latest.json?app_id=${vm.apiKey}`,
+                parse: false
+            }
         };
 
+        for(var key in vm.options){
+            if(!vm.options[key].enable){
+                delete vm.options[key]
+            }
+        }
 
-        let options = _.map((_.filter(vm.options, {'enable': true})), (k)=> {
-            return {url: k.url, parse: k.parse}
-        });
-        console.log(vm.options.APP);
+        for(var key in vm.options){
+            delete vm.options[key].enable;
+        }
 
-        socketService.emit('options', options);
+        console.log(vm.options);
+
+        //let opts = _.map((_.filter(vm.options, {'enable': true})), (k)=> {
+        //    return {url: k.url, parse: k.parse}
+        //});
+
+        //console.log(opts);
+
+        socketService.emit('options', vm.options);
         tokenFactory.setApi(vm.apiKey);
 
-        //$http.post(API_URL + 'config', {apiKey: vm.apiKey}).success((res)=> {
-        //    console.log(res);
-        //    tokenFactory.setApi(vm.apiKey);
-        //}).error((err)=> {
-        //    console.log(err);
-        //});
         vm.apiKeySubmit = false;
     }
 }
