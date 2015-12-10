@@ -5,8 +5,9 @@
             button(ng-class="{'btn-success':!currency.subscription,'btn-danger':currency.subscription}").btn(ng-click="currency.toggle()") {{currency.message}}
             h2 Base currency: EUR
             hr
-            input.currency__relative(ng-if="currency.edit" ng-model="currency.selectedCopy" type="text" maxlength="3")
+            input.currency__relative(ng-model="currency.selectedCopy" type="text" maxlength="3")
             button.btn.btn-success(ng-if="currency.edit" ng-click="currency.save()") Save
+            button.btn.btn-success(ng-if="!currency.edit" ng-click="currency.add()") Add
             button.btn.btn-danger(ng-if="currency.edit" ng-click="currency.cancel()") Cancel
 
             table.table.table-striped

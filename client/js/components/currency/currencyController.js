@@ -8,20 +8,25 @@ export default function (socketService, alert, tokenFactory) {
     vm.selectedItem = null;
     vm.selectedCopy = null;
 
-    vm.select = function(item) {
+    vm.select = (item) => {
         vm.edit = true;
         vm.selectedItem = item;
         vm.selectedCopy = angular.copy(vm.selectedItem);
     };
 
-    vm.cancel = function () {
+    vm.add = (item) => {
+        vm.relative.push(vm.selectedCopy);
+    };
+
+    vm.cancel = () => {
         vm.selectedCopy = null;
         vm.edit = false;
     };
 
-    vm.save = function() {
-        let index = _.indexOf(vm.relative,vm.selectedItem);
-        vm.relative.splice(index,1,vm.selectedCopy);
+
+    vm.save = () => {
+        let index = _.indexOf(vm.relative, vm.selectedItem);
+        vm.relative.splice(index, 1, vm.selectedCopy);
         vm.selectedCopy = null;
         vm.edit = false;
     };
