@@ -106,3 +106,7 @@
 [0mPOST /config [32m200 [0m1.264 ms - 27[0m
 [0mOPTIONS /login [32m200 [0m2.608 ms - 4[0m
 [0mPOST /login [32m200 [0m451.140 ms - 262[0m
+[0mOPTIONS /register [32m200 [0m2.653 ms - 4[0m
+[0mPOST /register [32m200 [0m524.223 ms - 438[0m
+[0mOPTIONS /login [32m200 [0m2.529 ms - 4[0m
+[0mPOST /login [32m200 [0m173.252 ms - 569[0m

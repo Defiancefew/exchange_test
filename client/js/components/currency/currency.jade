@@ -5,27 +5,44 @@
             button(ng-class="{'btn-success':!currency.subscription,'btn-danger':currency.subscription}").btn(ng-click="currency.toggle()") {{currency.message}}
             h2 Base currency: EUR
             hr
-            h3 Eurofxref
+            input.currency__relative(ng-if="currency.edit" ng-model="currency.selectedCopy" type="text" maxlength="3")
+            button.btn.btn-success(ng-if="currency.edit" ng-click="currency.save()") Save
+            button.btn.btn-danger(ng-if="currency.edit" ng-click="currency.cancel()") Cancel
+
             table.table.table-striped
                 tr
-                    th Currency
-                    th Rate
-                tr(ng-repeat="cur in currency.EXF")
-                    td {{cur.currency}}
-                    td {{cur.rate}}
-            h3 Open Exchange Rates
-            table.table.table-striped
-                tr
-                    th Currency
-                    th Rate
-                tr(ng-repeat="cur in currency.OER")
-                    td {{cur.currency}}
-                    td {{cur.rate}}
-            h3 Appspot
-            table.table.table-striped
-                tr
-                    th Currency
-                    th Rate
-                tr(ng-repeat="cur in currency.APP")
-                    td {{cur.source}}
-                    td {{cur.rate}}
+                    th Relative
+                    th OER
+                    th EXF
+                    th APP
+                tr(ng-repeat="relative in currency.relative" ng-click="currency.select(relative)")
+                    td {{relative}}
+                    td
+                    td
+                    td
+
+            //input.form-control.currency__find(ng-model="currency.find" placeholder="Specify your relative currency here" maxlength="3")
+            //h3 Eurofxref
+            //table.table.table-striped
+            //    tr
+            //        th Currency
+            //        th Rate
+            //    tr(ng-repeat="cur in currency.EXF | filter: {currency: currency.find}")
+            //        td {{cur.currency}}
+            //        td {{cur.rate}}
+            //h3 Open Exchange Rates
+            //table.table.table-striped
+            //    tr
+            //        th Currency
+            //        th Rate
+            //    tr(ng-repeat="cur in currency.OER | filter: {currency: currency.find}")
+            //        td {{cur.currency}}
+            //        td {{cur.rate}}
+            //h3 Appspot
+            //table.table.table-striped
+            //    tr
+            //        th Currency
+            //        th Rate
+            //    tr(ng-repeat="cur in currency.APP | filter: {currency: currency.find}")
+            //        td {{cur.source}}
+            //        td {{cur.rate}}

@@ -3,16 +3,26 @@ export default function (API_URL, $http, tokenFactory, socketService) {
 
     (!tokenFactory.getApi()) ? vm.apiKey = null : vm.apiKey = tokenFactory.getApi();
 
+    socketService.on('error', (error)=> {
+        console.log(error.message);
+    });
+
+    socketService.emit('getOptions', {token: tokenFactory.getToken()});
+
+    socketService.on('getOptions', (options) => {
+        tokenFactory.setApi(options.apiKey);
+        vm.options = options.options;
+
+        vm.enable = {
+            OER: vm.options.OER.enable,
+            EXF: vm.options.EXF.enable,
+            APP: vm.options.APP.enable
+        };
+    });
+
     vm.baseValue = 'EUR';
-    vm.apiKeySubmit = false;
 
-    vm.enable = {
-        OER: false,
-        EXF: true,
-        APP: false
-    };
-
-    //   Remember - checkbox resets when neither "label for" nor "id" specified
+    //TODO   Remember - checkbox resets when neither "label for" nor "id" specified
 
     vm.submit = function () {
 
@@ -34,27 +44,7 @@ export default function (API_URL, $http, tokenFactory, socketService) {
             }
         };
 
-        for(var key in vm.options){
-            if(!vm.options[key].enable){
-                delete vm.options[key]
-            }
-        }
-
-        for(var key in vm.options){
-            delete vm.options[key].enable;
-        }
-
-        console.log(vm.options);
-
-        //let opts = _.map((_.filter(vm.options, {'enable': true})), (k)=> {
-        //    return {url: k.url, parse: k.parse}
-        //});
-
-        //console.log(opts);
-
-        socketService.emit('options', vm.options);
+        socketService.emit('saveOptions', {options: vm.options, token: tokenFactory.getToken(), apiKey: vm.apiKey});
         tokenFactory.setApi(vm.apiKey);
-
-        vm.apiKeySubmit = false;
     }
 }

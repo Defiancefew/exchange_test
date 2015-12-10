@@ -10,12 +10,12 @@ app.post('/login', passport.authenticate('local-login'), (req, res) => auth.crea
 
 app.post('/config', (req, res) => {
 
-    let payload = auth.tokenCheck(req, res);
-
-    User.update({_id: payload.sub}, {apiKey: req.body.apiKey}, null, (err) => {
-        if (err) throw(err);
-        res.status(200).send({message: 'Everything ok'});
-    });
+    //let payload = auth.tokenCheck(req, res);
+    //
+    //User.update({_id: payload.sub}, {apiKey: req.body.apiKey}, null, (err) => {
+    //    if (err) throw(err);
+    //    res.status(200).send({message: 'Everything ok'});
+    //});
 
 });
 

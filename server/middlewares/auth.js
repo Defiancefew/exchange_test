@@ -45,7 +45,24 @@ exports.registerStrategy = new LocalStrategy(strategyOptions, function (email, p
             var newUser = new User({
                 email: email,
                 password: password,
-                apiKey: ''
+                apiKey: '',
+                options: {
+                    EXF: {
+                        enable: true,
+                        url: 'http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml',
+                        parse: true
+                    },
+                    APP: {
+                        enable: false,
+                        url: ``,
+                        parse: false
+                    },
+                    OER: {
+                        enable: false,
+                        url: ``,
+                        parse: false
+                    }
+                }
             });
 
             newUser.save(function (err) {

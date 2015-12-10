@@ -5,6 +5,7 @@ import 'angular-messages';
 
 import moment from 'moment';
 import $ from 'jquery';
+import _ from 'lodash';
 
 import 'animate.css/animate.css';
 import "bootstrap/dist/css/bootstrap.css";

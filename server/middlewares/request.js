@@ -42,7 +42,9 @@ exports.request = function (url, parseXML) {
 exports.process = function (options,io) {
 
     let mapper = _.map(options,(k,v)=>{
-       return exports.request(k.url,k.parse);
+        if(k.enable){
+            return exports.request(k.url,k.parse);
+        }
     });
 
     return Promise.all(mapper).then(data => {

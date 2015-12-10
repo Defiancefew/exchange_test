@@ -1,9 +1,31 @@
-
-export default function ($http, API_URL, socketService, alert, tokenFactory,currencyFactory) {
+export default function (socketService, alert, tokenFactory) {
     let vm = this;
+    vm.status = 'disconnected';
+    vm.message = 'Subscribe';
+    vm.subscription = false;
+    vm.edit = false;
+    vm.relative = ['USD', 'AFN'];
+    vm.selectedItem = null;
+    vm.selectedCopy = null;
 
-    vm.subscription = true;
-    vm.message = "Cancel subscription";
+    vm.select = function(item) {
+        vm.edit = true;
+        vm.selectedItem = item;
+        vm.selectedCopy = angular.copy(vm.selectedItem);
+    };
+
+    vm.cancel = function () {
+        vm.selectedCopy = null;
+        vm.edit = false;
+    };
+
+    vm.save = function() {
+        let index = _.indexOf(vm.relative,vm.selectedItem);
+        vm.relative.splice(index,1,vm.selectedCopy);
+        vm.selectedCopy = null;
+        vm.edit = false;
+    };
+
     vm.toggle = () => {
 
         if (vm.subscription) {
@@ -12,62 +34,62 @@ export default function ($http, API_URL, socketService, alert, tokenFactory,curr
             vm.subscription = false;
         }
         else {
-            if (!!tokenFactory.getApi()) {
-                vm.checkApiKey = true;
-                socketService.emit('subscribe', tokenFactory.getApi());
-            } else {
-                socketService.emit('subscribe', '');
-                vm.checkApiKey = false;
-            }
+            socketService.emit('subscribe', vm.options);
             vm.subscription = true;
             vm.message = "Unsubscribe";
         }
+
     };
 
+    socketService.emit('subscribe', vm.options);
 
-    socketService.on('status', (status) => {
-        vm.status = status;
+    socketService.on('currency', data => {
 
-        if (!!tokenFactory.getApi()) {
-            socketService.emit('subscribe', tokenFactory.getApi());
-            vm.checkApiKey = true;
-        } else {
-            socketService.emit('subscribe', '');
-            vm.checkApiKey = false;
+        vm.EXF = data[0].data;
+
+        vm.APP = [{source: data[1].data.source, currency: data[1].data.target, rate: data[1].data.rate}];
+
+        let keys = _.keys(data[2].data.rates),
+            values = _.values(data[2].data.rates),
+            array = [],
+            euroRate,
+            index;
+
+        for (let i = 0; i < keys.length; i++) {
+            array[i] = {currency: keys[i], rate: values[i]};
         }
 
-        socketService.on('currency', data => {
+        euroRate = _.find(array, {currency: 'EUR'}).rate;
+        _.pull(array, _.find(array, {currency: 'EUR'}));
 
-            console.log(data);
-            //console.log(data);
-
-            //vm.EXF = data[0].data;
-
-            //vm.EXF = _.map(data[0].data, (v, k) => {
-            //    return {[v.currency]: v.rate};
-            //});
-
-            //vm.APP = [{source: data[1].data.source ,currency: data[1].data.target , rate: data[1].data.rate}];
-            //
-            //let keys = _.keys(data[2].data.rates),
-            //    values = _.values(data[2].data.rates),
-            //    array = [];
-            //
-            //for (let i = 0; i < keys.length; i++) {
-            //    array[i] = {currency: keys[i], rate: values[i]};
-            //}
-            //
-            //vm.OER = array;
-
-            //console.log(vm.EXF);
-            //console.log(vm.OER);
-            //console.log(vm.APP);
-
-            socketService.emit('unsubscribe');
+        vm.OER = _.map(array, (k, v)=> {
+            return {currency: k.currency, rate: _.floor((k.rate / euroRate), 5)}
         });
 
+        index = _.indexOf(vm.OER, _.find(vm.OER, {currency: 'USD'}));
+        vm.OER[index].rate = (vm.OER[index].rate / euroRate);
 
+        //console.log(vm.EXF);
+        //console.log(vm.OER);
+        //console.log(vm.APP);
+        console.log(data);
+
+        socketService.emit('unsubscribe');
     });
 
+    socketService.on('status', (status) => {
+        vm.subscription = true;
+        vm.message = "Cancel subscription";
+        vm.status = status;
 
+        socketService.on('error', (error)=> {
+            console.log(error.message);
+        });
+
+        socketService.emit('getOptions', {token: tokenFactory.getToken()});
+        socketService.on('getOptions', (options) => {
+            vm.options = options;
+            //socketService.emit('subscribe', vm.options);
+        });
+    });
 }
