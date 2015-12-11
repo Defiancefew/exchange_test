@@ -1,0 +1,56 @@
+html 
+	box-sizing: border-box
+
+*, *:before, *:after 
+	box-sizing: inherit
+
+body
+	font:
+		family: Arial,sans-serif
+		weight: normal
+		size: 12px
+	line-height: 1.4
+	position: relative
+	-webkit-font-smoothing: antialised
+	overflow-x: hidden
+
+body input:focus:required:invalid,
+body textarea:focus:required:invalid
+	color: red
+body input:required:valid,
+body textarea:required:valid
+	color: green
+
+input:focus::-webkit-input-placeholder 
+	color: transparent
+	outline: none
+input:focus::-moz-placeholder          
+	color: transparent
+	outline: none
+input:focus:-moz-placeholder           
+	color: transparent
+	outline: none
+input:focus:-ms-input-placeholder      
+	color: transparent
+	outline: none
+textarea:focus
+	outline: none
+
+label 
+	cursor: pointer
+	-webkit-user-select: none
+	-moz-user-select: none
+	-ms-user-select: none
+	-o-user-select: none
+	user-select: none
+
+img
+	height: auto
+	max-width: 100%
+	width: auto\9
+
+ul 
+	list-style: none
+
+.hidden
+	display: none

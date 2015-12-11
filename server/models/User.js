@@ -9,23 +9,7 @@ var UserSchema = new mongoose.Schema({
     email: String,
     password: String,
     apiKey: String,
-    options: {
-        EXF: {
-            enable: Boolean,
-            url: String,
-            parse: Boolean
-        },
-        APP: {
-            enable: Boolean,
-            url: String,
-            parse: Boolean
-        },
-        OER: {
-            enable: Boolean,
-            url: String,
-            parse: Boolean
-        }
-    }
+    options: mongoose.Schema.Types.Mixed
 });
 
 

@@ -9,6 +9,6 @@
                     input(id="config__ecb" type="checkbox" ng-model="config.enable.EXF")
                 label(for="config__app") Enable Appspot currency tracking
                     input(id="config__app" type="checkbox" ng-model="config.enable.APP" )
-                label.config__appbase(for="config__appbase" ng-if="config.enable.APP" ) Base Value
+                label.config__appbase(for="config__appbase" ng-if="config.enable.APP" ) Relative appspot value
                     input.config__base.form-control.animated(id="config__appbase" ng-class="{'fadeInDown' : config.enable.APP}" type="text" ng-model="config.baseValue" maxlength="3")
                 button.btn.btn-success.config__submit Submit

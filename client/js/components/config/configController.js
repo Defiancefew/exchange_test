@@ -33,14 +33,14 @@ export default function (API_URL, $http, tokenFactory, socketService) {
                 url: 'http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml',
                 parse: true
             },
-            APP: {
-                enable: vm.enable.APP,
-                url: `http://currency-api.appspot.com/api/${vm.baseValue}/USD.json`,
-                parse: false
-            },
             OER: {
                 enable: vm.enable.OER,
                 url: `https://openexchangerates.org/api/latest.json?app_id=${vm.apiKey}`,
+                parse: false
+            },
+            APP: {
+                enable: vm.enable.APP,
+                url: `http://currency-api.appspot.com/api/EUR/${vm.baseValue}.json`,
                 parse: false
             }
         };
