@@ -30,6 +30,7 @@
     "moment": "^2.10.6",
     "mongoose": "^4.2.8",
     "morgan": "^1.6.1",
+    "nodemon": "^1.8.1",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "resolve-url-loader": "^1.4.2",
