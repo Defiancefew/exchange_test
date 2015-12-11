@@ -2,7 +2,7 @@
     .row
         .col-md-12
             h1 Server status : {{currency.status}}
-            button(ng-class="{'btn-success':!currency.subscription,'btn-danger':currency.subscription}").btn(ng-click="currency.toggle()") {{currency.message}}
+            button.btn(ng-class="{'btn-success':!currency.subscription,'btn-danger':currency.subscription}" ng-click="currency.toggle()") {{currency.message}}
             h2 Base currency: EUR
             hr
             input.currency__relative(ng-model="currency.selectedCopy" type="text" maxlength="3")

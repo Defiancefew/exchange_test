@@ -1,5 +1,6 @@
 export default function (API_URL, $http, tokenFactory, socketService) {
     var vm = this;
+    socketService.emit('unsubscribe');
 
     (!tokenFactory.getApi()) ? vm.apiKey = null : vm.apiKey = tokenFactory.getApi();
 

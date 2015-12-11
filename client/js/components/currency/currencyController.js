@@ -8,6 +8,8 @@ export default function (socketService, alert, tokenFactory) {
     vm.selectedItem = null;
     vm.selectedCopy = null;
 
+
+
     vm.select = (item) => {
         vm.edit = true;
         vm.selectedItem = item;
@@ -46,10 +48,10 @@ export default function (socketService, alert, tokenFactory) {
 
     };
 
-    socketService.emit('subscribe', vm.options);
+
 
     socketService.on('currency', data => {
-
+        vm.subscription = true;
         vm.EXF = data[0].data;
 
         vm.APP = [{source: data[1].data.source, currency: data[1].data.target, rate: data[1].data.rate}];
@@ -86,6 +88,10 @@ export default function (socketService, alert, tokenFactory) {
         vm.subscription = true;
         vm.message = "Cancel subscription";
         vm.status = status;
+
+        if (vm.subscription) {
+            socketService.emit('subscribe', vm.options);
+        }
 
         socketService.on('error', (error)=> {
             console.log(error.message);
