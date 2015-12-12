@@ -1,6 +1,6 @@
-export default function (API_URL, $http, tokenFactory, socketService) {
+export default function (API_URL, $http, tokenFactory, socketService,$state) {
     var vm = this;
-    socketService.emit('unsubscribe');
+    //socketService.emit('unsubscribe');
 
     (!tokenFactory.getApi()) ? vm.apiKey = null : vm.apiKey = tokenFactory.getApi();
 
@@ -21,7 +21,7 @@ export default function (API_URL, $http, tokenFactory, socketService) {
         };
     });
 
-    vm.baseValue = 'EUR';
+    vm.baseValue = 'USD';
 
     //TODO   Remember - checkbox resets when neither "label for" nor "id" specified
 
@@ -45,7 +45,9 @@ export default function (API_URL, $http, tokenFactory, socketService) {
             }
         };
 
-        socketService.emit('saveOptions', {options: vm.options, token: tokenFactory.getToken(), apiKey: vm.apiKey});
+        socketService.emit('saveOptions', {options: vm.options, token: tokenFactory.getToken(), apiKey: vm.apiKey, baseValue: vm.baseValue});
         tokenFactory.setApi(vm.apiKey);
+
+        $state.go('currency');
     }
 }

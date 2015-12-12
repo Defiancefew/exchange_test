@@ -39,15 +39,22 @@ exports.request = function (url, parseXML) {
     });
 };
 
-exports.process = function (options,io) {
+exports.process = function (options,io,message) {
 
     let mapper = _.map(options,(k,v)=>{
         if(k.enable){
-            return exports.request(k.url,k.parse);
+            return {url: k.url, parse: k.parse};
         }
     });
 
+    mapper = _.uniq(mapper, 'url');
+    console.log(mapper);
+
+    mapper = _.map(mapper,(k,v) => {
+       return exports.request(k.url,k.parse);
+    });
+
     return Promise.all(mapper).then(data => {
-        io.emit('currency',data);
+        io.emit(message.toString(),data);
     });
 };

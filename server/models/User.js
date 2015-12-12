@@ -9,6 +9,7 @@ var UserSchema = new mongoose.Schema({
     email: String,
     password: String,
     apiKey: String,
+    baseValue: String,
     options: mongoose.Schema.Types.Mixed
 });
 
