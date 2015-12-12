@@ -7,3 +7,4 @@
                     input.form-control(type="email" ng-model="register.user.email")
                     input.form-control(type="password" ng-model="register.user.password")
                     button.btn.btn-success Register
+                    alert(ng-if="register.error" type="register.error.type" title="register.error.title" message="register.error.message")

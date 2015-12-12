@@ -1,26 +1,33 @@
-export default function (socketService, alert, tokenFactory) {
+export default function (socketService, alert, tokenFactory, $scope, currencyFactory) {
 
     let vm = this;
     vm.status = 'disconnected';
-    vm.message = 'Subscribe';
-    vm.subscription = false;
+    vm.message = 'subscribe';
+    vm.subscription = true;
     vm.edit = false;
-    vm.relative = ['USD', 'AFN'];
-    vm.selectedItem = null;
-    vm.selectedCopy = null;
+    vm.options = null;
+    vm.baseValue = 'USD';
+    vm.edited = null;
+    //vm.selectedItem = null;
+
+    socketService.emit('getOptions', {token: tokenFactory.getToken()});
+
+    vm.find = () => {
+
+        socketService.emit('getAdditional', {
+            APP: {
+                enable: true,
+                url: `http://currency-api.appspot.com/api/EUR/${vm.selectedCopy}.json`,
+                parse: false
+            }
+        });
+    };
 
     vm.select = (item) => {
 
         vm.edit = true;
         vm.selectedItem = item;
         vm.selectedCopy = angular.copy(vm.selectedItem);
-
-    };
-
-
-    vm.add = (item) => {
-
-        vm.relative.push(vm.selectedCopy);
 
     };
 
@@ -32,96 +39,98 @@ export default function (socketService, alert, tokenFactory) {
     };
 
     vm.save = () => {
+        socketService.emit('getAdditional', {
+            APP: {
+                enable: true,
+                url: `http://currency-api.appspot.com/api/EUR/${vm.selectedCopy}.json`,
+                parse: false
+            }
+        });
 
-        let index = _.indexOf(vm.relative, vm.selectedItem);
-        vm.relative.splice(index, 1, vm.selectedCopy);
-        vm.selectedCopy = null;
+        if (vm.edited === null) {
+            let value = _.find(vm.testGlobal, {relative: vm.selectedItem});
+            console.log(value);
+            let index = _.indexOf(vm.testGlobal, value);
+
+            vm.testGlobal.splice(index, 1, vm.edited);
+            _.compact(vm.testGlobal);
+        }
+
+        //vm.selectedCopy = null;
         vm.edit = false;
 
+    };
+
+    vm.delete = (item) => {
+        _.pull(vm.testGlobal, item);
     };
 
     vm.toggle = () => {
 
         if (vm.subscription) {
-
             socketService.emit('unsubscribe');
             vm.message = "Subscribe";
             vm.subscription = false;
 
         }
         else {
-
             socketService.emit('subscribe', vm.options);
             vm.subscription = true;
             vm.message = "Unsubscribe";
-
         }
-
     };
 
-    socketService.on('currency', data => {
-        let keys = _.keys(data[2].data.rates),
-            values = _.values(data[2].data.rates),
-            array = [],
-            euroRate,
-            index;
-        vm.subscription = true;
-        vm.EXF = data[0].data;
-
-
-        for (let i = 0; i < keys.length; i++) {
-
-            array[i] = {currency: keys[i], rate: values[i]};
-
-        }
-
-        euroRate = _.find(array, {currency: 'EUR'}).rate;
-        _.pull(array, _.find(array, {currency: 'EUR'}));
-
-        vm.OER = _.map(array, (k, v)=> {
-
-            return {currency: k.currency, rate: _.floor((k.rate / euroRate), 5)}
-
-        });
-
-        index = _.indexOf(vm.OER, _.find(vm.OER, {currency: 'USD'}));
-        vm.OER[index].rate = (vm.OER[index].rate / euroRate);
-
-        vm.APP = [{source: data[1].data.source, currency: data[1].data.target, rate: data[1].data.rate}];
-
-
-
-        //console.log(vm.EXF);
-        //console.log(vm.OER);
-        //console.log(vm.APP);
-        console.log(data);
-
-        socketService.emit('unsubscribe');
+    socketService.on('status', (status) => {
+        vm.status = status;
     });
 
-    socketService.on('status', (status) => {
+    socketService.on('error', (error)=> {
+        vm.error = alert.generateError(false, 'Error','Something went wrong');
+    });
 
-        vm.subscription = true;
-        vm.message = "Cancel subscription";
-        vm.status = status;
-
+    socketService.on('getOptions', (options) => {
+        vm.options = options.options;
         if (vm.subscription) {
-
-            socketService.emit('subscribe', vm.options);
-
+            socketService.emit("subscribe", vm.options);
         }
+        vm.baseValue = options.baseValue;
+    });
 
-        socketService.on('error', (error)=> {
+    socketService.on('currency', data => {
+        console.log(data);
+        vm.subscription = true;
+        vm.EXF = currencyFactory.sortEXF(data);
+        vm.OER = currencyFactory.sortOER(data);
+        vm.APP = currencyFactory.sortAPP(data);
 
-            console.log(error.message);
+        vm.testGlobal = [{
+            relative: vm.baseValue,
+            EXF: _.find(vm.EXF, {currency: vm.baseValue}).rate,
+            OER: _.find(vm.OER, {currency: vm.baseValue}).rate,
+            APP: _.find(vm.APP, {currency: vm.baseValue}).rate
+        }];
 
-        });
+    });
 
-        socketService.emit('getOptions', {token: tokenFactory.getToken()});
-        socketService.on('getOptions', (options) => {
+    socketService.on('getAdditional', (data)=> {
 
-            vm.options = options;
-            //socketService.emit('subscribe', vm.options);
-        });
+        if (data[0].data.target && data[0].data.rate) {
+            if (vm.edit) {
+                vm.edited = {currency: data[0].data.target, rate: data[0].data.rate};
+            } else {
+                if (_.indexOf(vm.APP, {currency: vm.selectedCopy}) == -1) {
+                    vm.APP.push({currency: data[0].data.target, rate: data[0].data.rate});
+                }
+
+                vm.testGlobal.push({
+                    relative: vm.selectedCopy,
+                    EXF: _.find(vm.EXF, {currency: vm.selectedCopy}).rate,
+                    OER: _.find(vm.EXF, {currency: vm.selectedCopy}).rate,
+                    APP: _.find(vm.APP, {currency: vm.selectedCopy}).rate
+                });
+            }
+        }else{
+            vm.error = alert.generateError(false, 'Error','Specify right currency');
+        }
     });
 }

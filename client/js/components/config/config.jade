@@ -12,3 +12,4 @@
                 label.config__appbase(for="config__appbase" ng-if="config.enable.APP" ) Relative appspot value
                     input.config__base.form-control.animated(id="config__appbase" ng-class="{'fadeInDown' : config.enable.APP}" type="text" ng-model="config.baseValue" maxlength="3")
                 button.btn.btn-success.config__submit Submit
+                alert(ng-if="config.error" type="config.error.type" title="config.error.title" message="config.error.message")

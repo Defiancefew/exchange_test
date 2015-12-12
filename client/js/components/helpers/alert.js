@@ -1,7 +1,9 @@
 export default function ($timeout) {
-    var alertTimeout;
+    let alertTimeout,
+        alertService = {};
 
-    return function (type, title, message, timeout) {
+
+    alertService.defineError = function (type, title, message, timeout) {
         let alert = {
             hasBeenShown: true,
             show: true,
@@ -13,5 +15,15 @@ export default function ($timeout) {
         alertTimeout = $timeout(() => alert.show = false, timeout || 1500);
 
         return alert;
-    }
+    };
+
+    alertService.generateError = function (type, title, message) {
+        return {
+            type: type,
+            title: title,
+            message: message
+        }
+    };
+
+    return alertService;
 }

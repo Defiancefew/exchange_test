@@ -5,22 +5,27 @@
             button.btn(ng-class="{'btn-success':!currency.subscription,'btn-danger':currency.subscription}" ng-click="currency.toggle()") {{currency.message}}
             h2 Base currency: EUR
             hr
+            h4(ng-if="currency.edit") Edit
             input.currency__relative(ng-model="currency.selectedCopy" type="text" maxlength="3")
-            button.btn.btn-success(ng-if="currency.edit" ng-click="currency.save()") Save
-            button.btn.btn-success(ng-if="!currency.edit" ng-click="currency.add()") Add
+            button.btn.btn-success(ng-if="!currency.edit" ng-click="currency.find()") Find
             button.btn.btn-danger(ng-if="currency.edit" ng-click="currency.cancel()") Cancel
-
+            button.btn.btn-success(ng-if="currency.edit" ng-click="currency.save()") Save
+            alert(ng-if="currency.error" type="currency.error.type" title="currency.error.title" message="currency.error.message")
             table.table.table-striped
                 tr
+                    th Delete
                     th Relative
                     th OER
                     th EXF
                     th APP
-                tr(ng-repeat="relative in currency.relative" ng-click="currency.select(relative)")
-                    td {{relative}}
+                tr(ng-repeat="rel in currency.testGlobal track by $index")
                     td
-                    td
-                    td
+                        button(ng-click="currency.delete(rel)") Delete
+                    td(ng-click="currency.select(rel.relative)") {{rel.relative}}
+                    td {{rel.OER}}
+                    td {{rel.EXF}}
+                    td {{rel.APP}}
+
 
             //input.form-control.currency__find(ng-model="currency.find" placeholder="Specify your relative currency here" maxlength="3")
             //h3 Eurofxref

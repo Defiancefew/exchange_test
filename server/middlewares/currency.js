@@ -12,7 +12,9 @@ let fs = require('fs'),
 module.exports = function (io) {
 
     io.on('connection', (socket) => {
-        let subscription;
+        let subscription,
+            additionalSubscription;
+
         socket.emit('status', 'online');
 
         socket.on('saveOptions', (options) => {
@@ -22,7 +24,7 @@ module.exports = function (io) {
                 socket.emit('error', {message: 'You\'re not authorized'});
             }
 
-            User.update({_id: payload.sub}, {options: options.options, apiKey: options.apiKey}, null, (err) => {
+            User.update({_id: payload.sub}, {options: options.options, apiKey: options.apiKey, baseValue: options.baseValue}, null, (err) => {
                 if (err) throw(err);
                 socket.emit('success', {message: 'Everything fine'});
             });
@@ -36,28 +38,33 @@ module.exports = function (io) {
                     throw(err)
                 }
                 if (user.options) {
-                    socket.emit('getOptions', {options: user.options, apiKey: user.apiKey});
+                    socket.emit('getOptions', {options: user.options, apiKey: user.apiKey, baseValue: user.baseValue});
                 } else {
                     socket.emit('error', {message: 'Something went wrong'});
                 }
             });
         });
 
-        socket.on('subscribe', (options) => {
+        socket.on('subscribe', options => {
+            console.log('user subscribed');
 
-            let data = JSON.parse(fs.readFileSync('output.json', 'utf8')),
-                subscription = socket.emit('currency', data);
+            //let data = JSON.parse(fs.readFileSync('output.json', 'utf8')),
+            //    subscription = socket.emit('currency', data);
 
             // TODO : UNCOMMENT AFTER OPTIONS FIX
-
-            //let subscription = process(options, socket);
+            let subscription = process(options, socket,'currency');
             //subscription = setInterval(()=> {
-            //    process(options, socket);
+            //    process(options, socket,'currency');
             //}, 3000);
 
         });
 
+        socket.on('getAdditional',options => {
+            additionalSubscription = process(options,socket,'getAdditional');
+        });
+
         socket.on('unsubscribe', () => {
+            console.log('user unsubscribed');
             clearInterval(subscription);
             socket.emit('message', 'cancelled subscription')
         });

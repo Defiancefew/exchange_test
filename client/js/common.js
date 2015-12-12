@@ -12,6 +12,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/css/bootstrap-theme.css";
 
 import './components/config';
+import './components/alert';
 import './components/currency';
 import './components/header';
 import './components/helpers';
@@ -21,7 +22,7 @@ import './components/register';
 import '../sass/style.sass';
 
 angular.module('myApp', ['ui.router', 'ngMessages',
-    'btford.socket-io', 'config','currency','header',
+    'btford.socket-io', 'alert', 'config','currency','header',
     'helpers','login','register']);
 
 /* TODO Ng messages validation

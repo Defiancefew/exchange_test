@@ -217,6 +217,7 @@ pip-log.txt
 
 .idea
 materials
+dist
 node_modules
 bower_components
 lib
