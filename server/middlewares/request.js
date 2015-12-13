@@ -10,12 +10,17 @@ exports.request = function (url, parseXML) {
     return new Promise((resolve, reject) => {
         request(url, (error, response, body) => {
 
+            //if(JSON.parse(body).error){
+            //    let data = JSON.parse(body);
+            //    resolve(data);
+            //}
+
             if (!error && response.statusCode == 200) {
 
                 if (parse) {
 
                     parseString(body, (err, result) => {
-                        if (err) reject(err);
+                        //if (err) reject(err);
 
                         let data = result["gesmes:Envelope"]["Cube"][0]["Cube"][0]["Cube"];
 
@@ -32,9 +37,9 @@ exports.request = function (url, parseXML) {
                     resolve({urlInfo: url, data});
                 }
             }
-            else {
-                reject(error);
-            }
+            //else {
+            //    reject(error);
+            //}
         });
     });
 };
@@ -53,6 +58,7 @@ exports.process = function (options,io,message) {
     mapper = _.map(mapper,(k,v) => {
        return exports.request(k.url,k.parse);
     });
+
 
     return Promise.all(mapper).then(data => {
         io.emit(message.toString(),data);

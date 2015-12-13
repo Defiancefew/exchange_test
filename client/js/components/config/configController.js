@@ -1,31 +1,50 @@
 export default function (API_URL, $http, tokenFactory, socketService, $state, alert, $timeout, currencyFactory) {
     var vm = this;
     vm.baseValue = 'USD';
-    //socketService.emit('unsubscribe');
 
     (!tokenFactory.getApi()) ? vm.apiKey = null : vm.apiKey = tokenFactory.getApi();
 
-    //socketService.emit('getOptions', {token: tokenFactory.getToken()});
-
-    //socketService.on('getOptions', (options) => {
-    //    tokenFactory.setApi(options.apiKey);
-    //    vm.options = options.options;
-    //
-    //
-    //
-    //});
-
     vm.enable = {
-        OER: false,
         EXF: true,
+        OER: false,
         APP: false
     };
 
+    requestData(null);
 
+    function requestData(options) {
+        $http.post(`${API_URL}config`, {
+            options: options,
+            token: tokenFactory.getToken(),
+            apiKey: tokenFactory.getApi(),
+            baseValue: vm.baseValue
+        }).success((res)=> {
+            if (res.options) {
+
+                vm.options = res.options;
+                vm.apiKey = res.apiKey;
+                vm.baseValue = res.baseValue;
+
+                vm.enable = {
+                    EXF: vm.options.EXF.enable,
+                    OER: vm.options.OER.enable,
+                    APP: vm.options.APP.enable
+                };
+            } else {
+                $timeout(() => {
+                    $state.go('currency')
+                }, 2000);
+                vm.error = alert.generateError(true, 'Success!', 'Options are updated');
+            }
+        }).error(()=> {
+            vm.error = alert.generateError(false, 'Failure!', 'Try again later');
+        });
+        tokenFactory.setApi(vm.apiKey);
+    }
 
     //TODO   Remember - checkbox resets when neither "label for" nor "id" specified
 
-    vm.submit = function(){
+    vm.submit = function () {
         vm.options = {
             EXF: {
                 enable: vm.enable.EXF,
@@ -44,54 +63,30 @@ export default function (API_URL, $http, tokenFactory, socketService, $state, al
             }
         };
 
-        if(vm.options.OER.enable && vm.apiKey != null){
-
-            socketService.emit('checkApiKey',{OER: {
-                enable: vm.enable.OER,
-                url: `https://openexchangerates.org/api/latest.json?app_id=${vm.apiKey}`,
-                parse: false
-            }});
-            socketService.on('checkApiKey', (data)=> {
-
-                if(currencyFactory.checkRegExp(data, currencyFactory.regularExp.OER)){
-                    $http.post(`${API_URL}config`, {
-                        options: vm.options,
-                        token: tokenFactory.getToken(),
-                        apiKey: tokenFactory.getApi(),
-                        baseValue: vm.baseValue
-                    }).success((message)=> {
-                        vm.error = alert.generateError(true, 'Success!', 'Options are updated');
-                    }).error(()=> {
-                        vm.error = alert.generateError(false, 'Failure!', 'Try again later');
-                    });
-                    tokenFactory.setApi(vm.apiKey);
-                    $timeout(() => {
-                        $state.go('currency')
-                    }, 2000);
-                }else{
-                    vm.error = alert.generateError(false, 'Failure!', 'Specify valid api key');
+        if (vm.enable.OER && (vm.apiKey == '' || vm.apiKey.length < 5)) {
+            vm.error = alert.generateError(false, 'No api key', 'Your API key is too short');
+        } else if (vm.enable.OER && vm.apiKey.length >= 5) {
+            socketService.emit('checkApiKey', {
+                OER: {
+                    enable: vm.options.OER.enable,
+                    url: `https://openexchangerates.org/api/latest.json?app_id=${vm.apiKey}`,
+                    parse: false
                 }
             });
-        }else{
-            $http.post(`${API_URL}config`, {
-                options: vm.options,
-                token: tokenFactory.getToken(),
-                apiKey: tokenFactory.getApi(),
-                baseValue: vm.baseValue
-            }).success((message)=> {
-                vm.error = alert.generateError(true, 'Success!', 'Options are updated');
-            }).error(()=> {
-                vm.error = alert.generateError(false, 'Failure!', 'Try again later');
+
+            socketService.on('checkApiKey', (data)=> {
+                let check =  currencyFactory.checkRegExp(data, currencyFactory.regularExp.OER);
+
+                if (check.error) {
+                    vm.error = alert.generateError(false, 'Failure!', check.description);
+                } else {
+                    requestData(vm.options);
+                    vm.error = alert.generateError(false, 'Success!', 'Options Saved!');
+                }
             });
-            tokenFactory.setApi(vm.apiKey);
-            $timeout(() => {
-                $state.go('currency')
-            }, 2000);
+        } else {
+            vm.error = alert.generateError(true, 'Success', 'Options saved!');
+            requestData(vm.options);
         }
-
-    };
-
-
-
-
-}
+    }
+};

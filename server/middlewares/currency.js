@@ -8,6 +8,7 @@ let fs = require('fs'),
 // TODO Refactor options + request different currency from appspot
 
 // OER Api key:  d4f7a49c4d5842feb302f37549c768f9
+// 23acf14f4532474ab4baffa83808d0e0
 
 module.exports = function (io) {
 

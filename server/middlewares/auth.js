@@ -46,6 +46,7 @@ exports.registerStrategy = new LocalStrategy(strategyOptions, function (email, p
                 email: email,
                 password: password,
                 apiKey: '',
+                baseValue: 'USD',
                 options: {
                     EXF: {
                         enable: true,

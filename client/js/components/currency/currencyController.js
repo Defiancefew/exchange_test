@@ -12,7 +12,7 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
     socketService.emit('getOptions', {token: tokenFactory.getToken()});
 
     vm.find = () => {
-        if(vm.options.APP.enable){
+        if (vm.options.APP.enable) {
             socketService.emit('getAdditional', {
                 APP: {
                     enable: true,
@@ -20,7 +20,7 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
                     parse: false
                 }
             });
-        }else{
+        } else {
             socketService.emit('getAdditional');
         }
     };
@@ -100,33 +100,71 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
 
         vm.testGlobal = [{
             relative: vm.baseValue,
-            EXF:(vm.EXF != null) ? (_.find(vm.EXF, {currency: vm.baseValue}).rate) : null,
-            OER:(vm.OER != null) ? (_.find(vm.OER, {currency: vm.baseValue}).rate) : null,
-            APP:(vm.APP != null) ? (_.find(vm.APP, {currency: vm.baseValue}).rate) : null
+            EXF: (vm.EXF != null) ? (_.find(vm.EXF, {currency: vm.baseValue}).rate) : null,
+            OER: (vm.OER != null) ? (_.find(vm.OER, {currency: vm.baseValue}).rate) : null,
+            APP: (vm.APP != null) ? (_.find(vm.APP, {currency: vm.baseValue}).rate) : null
         }];
 
     });
 
     socketService.on('getAdditional', (data)=> {
-        if(currencyFactory.sortAPP(data) != null){
+        if (currencyFactory.sortAPP(data) != null) {
             let sorted = currencyFactory.sortAPP(data)[0];
 
             if (sorted.rate && vm.selectedCopy) {
-                    if (_.indexOf(vm.APP, {currency: vm.selectedCopy}) == -1) {
-                        vm.APP.push({currency: sorted.currency, rate: sorted.rate});
-                    }
-            }else{
-                vm.error = alert.generateError(false, 'Error','Specify right currency');
+                if (_.indexOf(vm.APP, {currency: vm.selectedCopy}) == -1) {
+                    vm.APP.push({currency: sorted.currency, rate: sorted.rate});
+                }
+            } else {
+                //if (_.indexOf(vm.APP, {currency: vm.selectedCopy}) == -1) {
+                //    vm.APP.push({currency: vm.selectedCopy, rate: null});
+                //}
+                //vm.error = alert.generateError(false, 'Error', 'Can\'t find currency in APPSPOT');
             }
         }
-            if(vm.selectedCopy){
-            vm.testGlobal.push({
-                relative: vm.selectedCopy,
-                EXF:(vm.EXF != null) ? (_.find(vm.EXF, {currency: vm.selectedCopy}).rate) : null,
-                OER:(vm.OER != null) ? (_.find(vm.OER, {currency: vm.selectedCopy}).rate) : null,
-                APP:(vm.APP != null) ? (_.find(vm.APP, {currency: vm.selectedCopy}).rate) : null
-            });
+        if (vm.selectedCopy) {
+            function search(currencyArray, currency) {
+                let find = _.find(currencyArray, {currency: currency});
+
+                if (find === undefined) {
+                    if (_.indexOf(currencyArray, {currency: currency}) == -1) {
+                        currencyArray.push({currency: currency, rate: null});
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
             }
+
+            let currArrEmpty = false,
+                counter = 0;
+
+            [vm.EXF, vm.OER, vm.APP].forEach(n => {
+                find = search(n, vm.selectedCopy);
+
+                if (find) {
+                    counter++;
+                }
+
+                if (counter === 3) {
+                    currArrEmpty = true;
+                    vm.error = alert.generateError(false, 'Error', 'Can\'t find currency all services');
+                }
+            });
+
+            if (!currArrEmpty) {
+                counter = 0;
+                currArrEmpty = false;
+                
+                vm.testGlobal.push({
+                    relative: vm.selectedCopy,
+                    EXF: (vm.EXF != null) ? (_.find(vm.EXF, {currency: vm.selectedCopy}).rate) : null,
+                    OER: (vm.OER != null) ? (_.find(vm.OER, {currency: vm.selectedCopy}).rate) : null,
+                    APP: (vm.APP != null) ? (_.find(vm.APP, {currency: vm.selectedCopy}).rate) : null
+                });
+            }
+        }
+
 
     });
 }

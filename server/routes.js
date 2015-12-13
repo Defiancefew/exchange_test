@@ -14,7 +14,7 @@ app.post('/config', (req, res) => {
     let payload = auth.tokenCheck(req, res),
         options;
 
-    if (req.body) {
+    if (req.body.options) {
         options = req.body;
         User.update({_id: payload.sub}, {
             options: options.options,
@@ -24,9 +24,24 @@ app.post('/config', (req, res) => {
             if (err) throw(err);
             res.status(200).send('Everything is fine!');
         });
+    }else{
+        let token = jwt.decode(req.body.token, 'shh...');
+
+        User.findOne({_id: token.sub}, (err, user)=> {
+            if (err) {
+                throw(err)
+            }
+            if (user.options) {
+                res.status(200).send({options: user.options, apiKey: user.apiKey, baseValue: user.baseValue});
+                //socket.emit('getOptions', {options: user.options, apiKey: user.apiKey, baseValue: user.baseValue});
+            } else {
+                res.status(400).send('Can\'t find options');
+            }
+        });
     }
 
 });
+
 
 //app.get('/currency', (req, res) => {
 //    // TODO Bugfix: Block user apikey send when logged out

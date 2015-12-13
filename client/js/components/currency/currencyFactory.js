@@ -8,16 +8,26 @@ export default function () {
     };
 
     sortDriver.checkRegExp = function(data, regExp) {
-        let sorted;
+        let sorted,
+            error;
 
-        if(data){
-            data.forEach((n)=> {
-                if (regExp.test(n['urlInfo'])) {
-                    sorted = n.data;
-                } else {
-                    return null;
-                }
-            });
+        if(_.isObject(data[0]) && data[0].hasOwnProperty('error')){
+            error = data[0]['error'];
+
+        }else{
+            error = false;
+        }
+
+        if(error){
+            return data[0];
+        }else{
+                data.forEach((n)=> {
+                    if (regExp.test(n['urlInfo'])) {
+                        sorted = n.data;
+                    } else {
+                        return null;
+                    }
+                });
         }
 
         return sorted;
