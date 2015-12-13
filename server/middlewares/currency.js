@@ -46,9 +46,9 @@ module.exports = function (io) {
         socket.on('getAdditional',options => {
             if(options){
                 additionalSubscription = process(options,socket,'getAdditional');
-                //additionalSubscription = setInterval(()=> {
-                //    process(options, socket,'getAdditional');
-                //}, 10000);
+                additionalSubscription = setInterval(()=> {
+                    process(options, socket,'getAdditional');
+                }, 5000);
             }
         });
 

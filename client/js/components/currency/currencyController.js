@@ -89,15 +89,18 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
 
     socketService.on('getOptions', (options) => {
         vm.options = options.options;
+        vm.baseValue = options.baseValue;
+
         if (vm.subscription) {
             socketService.emit("subscribe", vm.options);
+            vm.message = 'Unsubscribe';
         }
-        vm.baseValue = options.baseValue;
+
     });
 
     socketService.on('currency', data => {
 
-        vm.subscription = true;
+        console.log(data);
         vm.EXF = currencyFactory.sortEXF(data);
         vm.OER = currencyFactory.sortOER(data);
 
@@ -128,6 +131,7 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
                 }
             }
         }
+
         if (vm.selectedCopy) {
 
             function search() {
@@ -165,5 +169,6 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
 
             search();
         }
+
     });
 }
