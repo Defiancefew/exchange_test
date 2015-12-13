@@ -13,13 +13,13 @@
                 tr
                     th Delete
                     th Relative
-                    th OER
-                    th EXF
-                    th APP
+                    th(ng-if="currency.OER != null") OER
+                    th(ng-if="currency.EXF != null") EXF
+                    th(ng-if="currency.APP != null") APP
                 tr(ng-repeat="rel in currency.testGlobal track by $index")
                     td
                         button(ng-click="currency.delete(rel)") Delete
                     td(ng-click="currency.select(rel.relative)") {{rel.relative}}
-                    td {{rel.OER}}
-                    td {{rel.EXF}}
-                    td {{rel.APP}}
+                    td(ng-if="currency.OER != null") {{rel.OER}}
+                    td(ng-if="currency.EXF != null") {{rel.EXF}}
+                    td(ng-if="currency.APP != null") {{rel.APP}}

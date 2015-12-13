@@ -2,7 +2,6 @@ export default function ($timeout) {
     let alertTimeout,
         alertService = {};
 
-
     alertService.defineError = function (type, title, message, timeout) {
         let alert = {
             hasBeenShown: true,

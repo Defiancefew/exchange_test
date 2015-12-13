@@ -10,8 +10,6 @@ export default function (API_URL, $http, tokenFactory, socketService, $state, al
         APP: false
     };
 
-    requestData(null);
-
     function requestData(options) {
         $http.post(`${API_URL}config`, {
             options: options,
@@ -41,6 +39,8 @@ export default function (API_URL, $http, tokenFactory, socketService, $state, al
         });
         tokenFactory.setApi(vm.apiKey);
     }
+
+    requestData(null);
 
     //TODO   Remember - checkbox resets when neither "label for" nor "id" specified
 
