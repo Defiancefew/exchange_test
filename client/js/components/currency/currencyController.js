@@ -9,23 +9,33 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
     vm.baseValue = 'USD';
     vm.filterOrder = 'rel.relative';
     vm.edited = null;
-    vm.getAdditional = false;
+    vm.queue = [];
+    vm.initCurrencyArray = true;
+    vm.selectedValue = '';
+
+    let timer;
 
     socketService.emit('getOptions', {token: tokenFactory.getToken()});
 
+    $scope.$watchCollection('currency.queue', function (newValue) {
+        if (newValue[0]) {
+            socketService.emit('queue', vm.queue);
+            vm.subscription = true;
+            vm.message = "Unsubscribe";
+        }
+    });
+
     vm.find = () => {
-        vm.getAdditional = true;
+        vm.selectedCopy = vm.selectedValue;
+
+        let app = {
+            enable: true,
+            url: `http://currency-api.appspot.com/api/EUR/${vm.selectedCopy}.json`,
+            parse: false
+        };
 
         if (vm.options.APP.enable) {
-            socketService.emit('getAdditional', {
-                APP: {
-                    enable: true,
-                    url: `http://currency-api.appspot.com/api/EUR/${vm.selectedCopy}.json`,
-                    parse: false
-                }
-            });
-        } else {
-            socketService.emit('getAdditional');
+            vm.queue.push(app);
         }
     };
 
@@ -77,32 +87,35 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
     vm.toggle = () => {
 
         if (vm.subscription) {
-            socketService.emit('unsubscribe');
             vm.message = "Subscribe";
             vm.subscription = false;
-
+            clearInterval(timer);
         }
         else {
-            socketService.emit('subscribe', vm.options);
             vm.subscription = true;
             vm.message = "Unsubscribe";
+            timer =  setInterval(()=>{
+                socketService.emit('queue', vm.queue);
+                vm.subscription = true;
+                vm.message = "Unsubscribe";
+            }, 5000);
         }
     };
-
 
     socketService.on('getOptions', (options) => {
         vm.options = options.options;
         vm.baseValue = options.baseValue;
 
         if (vm.subscription) {
-            if (vm.options.EXF.enable || vm.options.OER.enable) {
-                socketService.emit("subscribe", {EXF: vm.options.EXF, OER: vm.options.OER});
+            if (vm.options.EXF.enable) {
+                vm.queue.push(vm.options.EXF);
+            }
+            if (vm.options.OER.enable) {
+                vm.queue.push(vm.options.OER);
             }
             if (vm.options.APP.enable) {
                 if (!vm.getAdditional) {
-                    socketService.emit("getAPP", {APP: vm.options.APP});
-                } else {
-                    socketService.emit("UnsubscribeAPP");
+                    vm.queue.push(vm.options.APP);
                 }
             }
             vm.message = 'Unsubscribe';
@@ -110,36 +123,27 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
 
     });
 
-    socketService.on('currency', data => {
+    socketService.on('queue', (data)=> {
 
-        vm.EXF = currencyFactory.sortEXF(data);
+        vm.EXF = currencyFactory.sortEXF(data)[0];
         vm.OER = currencyFactory.sortOER(data);
-        //vm.APP = currencyFactory.sortAPP(data);
+        vm.APP = currencyFactory.sortAPP(data);
 
-        vm.testGlobal = [{
-            relative: vm.baseValue,
-            EXF: (vm.EXF != null) ? (_.find(vm.EXF, {currency: vm.baseValue}).rate) : null,
-            OER: (vm.OER != null) ? (_.find(vm.OER, {currency: vm.baseValue}).rate) : null
-            , APP: (vm.APP != null) ? (_.find(vm.APP, {currency: vm.baseValue}).rate) : null
-        }];
+        if (vm.initCurrencyArray) {
 
-    });
+            vm.testGlobal = [{
+                relative: vm.baseValue,
+                EXF: (vm.EXF != null) ? (_.find(vm.EXF, {currency: vm.baseValue}).rate) : null,
+                OER: (vm.OER != null) ? (_.find(vm.OER, {currency: vm.baseValue}).rate) : null,
+                APP: (vm.APP != null) ? (_.find(vm.APP, {currency: vm.baseValue}).rate) : null
+            }];
 
-    socketService.on('getAdditional', (data)=> {
-        if (data) {
-            vm.APP.push(currencyFactory.sortAPP(data));
-            if (currencyFactory.sortAPP(data) != null) {
-                let sorted = currencyFactory.sortAPP(data)[0];
+            vm.initCurrencyArray = false;
 
-                if (sorted.rate && vm.selectedCopy) {
-                    if (_.indexOf(vm.APP, {currency: vm.selectedCopy}) == -1) {
-                        vm.APP.push({currency: sorted.currency, rate: sorted.rate});
-                    }
-                }
-            }
         }
 
         if (vm.selectedCopy) {
+
             function search() {
                 let findOER = _.find(vm.OER, {currency: vm.selectedCopy}),
                     findEXF = _.find(vm.EXF, {currency: vm.selectedCopy}),
@@ -178,21 +182,9 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
 
             search();
         }
-
     });
 
-    socketService.on('getAPP', (data)=> {
-        let APPdata = currencyFactory.sortAPP(data);
-        vm.APP = APPdata;
-        //vm.testGlobal[0].APP = APPdata[0]['rate'];
-
-        vm.testGlobal = [{
-            relative: vm.baseValue,
-            EXF: (vm.EXF != null) ? (_.find(vm.EXF, {currency: vm.baseValue}).rate) : null,
-            OER: (vm.OER != null) ? (_.find(vm.OER, {currency: vm.baseValue}).rate) : null
-            , APP: (vm.APP != null) ? (_.find(vm.APP, {currency: vm.baseValue}).rate) : null
-        }];
+    socketService.on('status',(status)=>{
+       vm.status = status;
     });
-
-
 }

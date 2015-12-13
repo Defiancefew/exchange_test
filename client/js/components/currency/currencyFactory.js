@@ -7,39 +7,44 @@ export default function () {
         APP: /appspot/
     };
 
-    sortDriver.checkRegExp = function(data, regExp) {
-        let sorted,
+    sortDriver.checkRegExp = function (data, regExp) {
+
+        let sorted = [],
             error;
 
-        if(_.isObject(data[0]) && data[0].hasOwnProperty('error')){
+        if (_.isObject(data[0]) && data[0].hasOwnProperty('error')) {
             error = data[0]['error'];
 
-        }else{
+        } else {
             error = false;
         }
 
-        if(error){
+        if (error) {
             return data[0];
-        }else{
-                data.forEach((n)=> {
-                    if (regExp.test(n['urlInfo'])) {
-                        sorted = n.data;
-                    } else {
-                        return null;
-                    }
-                });
+        } else {
+            data.forEach((n)=> {
+                if (regExp.test(n['urlInfo'])) {
+                    sorted.push(n.data);
+                } else {
+                    return null;
+                }
+            });
         }
-
         return sorted;
     };
 
     sortDriver.sortEXF = function (data) {
-        return this.checkRegExp(data, this.regularExp.EXF);
+        let sorted = this.checkRegExp(data, this.regularExp.EXF);
+        if(sorted != null){
+            return sorted;
+        }else{
+            return null;
+        }
     };
 
     sortDriver.sortOER = function (data) {
 
-        let sorted = this.checkRegExp(data, this.regularExp.OER);
+        let sorted = this.checkRegExp(data, this.regularExp.OER)[0];
 
         if (sorted != null) {
             let keys = _.keys(sorted.rates),
@@ -64,17 +69,23 @@ export default function () {
             mapped[index].rate = _.floor((mapped[index].rate / euroRate), 4);
 
             return mapped;
-        }else{
+
+        } else {
             return null;
         }
 
     };
 
     sortDriver.sortAPP = function (data) {
-        let sorted = this.checkRegExp(data, this.regularExp.APP);
-        if (sorted) {
-            return [{currency: sorted.target, rate: sorted.rate}];
+        let sorted = this.checkRegExp(data, this.regularExp.APP),
+            sortedData;
 
+        if (sorted) {
+            sortedData = _.map(sorted, k => {
+                return (!!k.rate) ? {currency: k.target, rate: k.rate} : {currency: k.tareg, rate: null};
+            });
+
+            return sortedData;
         }
         else {
             return null;

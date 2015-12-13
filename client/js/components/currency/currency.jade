@@ -1,14 +1,17 @@
 .container
     .row
-        .col-md-12
+        .col-md-6.col-md-offset-3
+            h2 Server status: {{currency.status}}
             button.btn(ng-class="{'btn-success':!currency.subscription,'btn-danger':currency.subscription}" ng-click="currency.toggle()") {{currency.message}}
             hr
+        .col-md-6.col-md-offset-3
             h4(ng-if="currency.edit") Edit
-            input.currency__relative(ng-model="currency.selectedCopy" type="text" maxlength="3")
-            button.btn.btn-success(ng-if="!currency.edit" ng-click="currency.find()") Find
+            input.currency__relative(ng-model="currency.selectedValue" type="text" maxlength="3")
+            button.currency__find.btn.btn-success(ng-if="!currency.edit" ng-click="currency.find()") Find
             button.btn.btn-danger(ng-if="currency.edit" ng-click="currency.cancel()") Cancel
             button.btn.btn-success(ng-if="currency.edit" ng-click="currency.save()") Save
             alert(ng-if="currency.error" type="currency.error.type" title="currency.error.title" message="currency.error.message")
+        .col-md-6.col-md-offset-3
             table.table.table-striped
                 tr
                     th Delete
@@ -17,9 +20,9 @@
                     th(ng-if="currency.EXF != null") EXF
                     th(ng-if="currency.APP != null") APP
                 tr(ng-repeat="rel in currency.testGlobal track by $index | orderBy : 'rel.relative'")
-                    td
+                    td.currency__deleteTable
                         button(ng-click="currency.delete(rel)") Delete
-                    td(ng-click="currency.select(rel.relative)") {{rel.relative}}
+                    td.currency__relativeTable(ng-click="currency.select(rel.relative)") {{rel.relative}}
                     td(ng-if="currency.OER != null") {{rel.OER}}
                     td(ng-if="currency.EXF != null") {{rel.EXF}}
                     td(ng-if="currency.APP != null") {{rel.APP}}

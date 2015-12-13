@@ -46,20 +46,41 @@ exports.request = function (url, parseXML) {
 
 exports.process = function (options,io,message) {
 
-    let mapper = _.map(options,(k,v)=>{
-        if(k.enable){
-            return {url: k.url, parse: k.parse};
-        }
-    });
+    if(message === 'checkApiKey'){
+        let mapper = _.map(options,(k,v)=>{
+            if(k.enable){
+                return {url: k.url, parse: k.parse};
+            }
+        });
 
-    mapper = _.uniq(mapper, 'url');
-    mapper = _.compact(mapper);
+        mapper = _.uniq(mapper, 'url');
+        mapper = _.compact(mapper);
 
-    mapper = _.map(mapper,(k,v) => {
-       return exports.request(k.url,k.parse);
-    });
+        mapper = _.map(mapper,(k,v) => {
+            return exports.request(k.url,k.parse);
+        });
 
-    return Promise.all(mapper).then(data => {
-        io.emit(message.toString(),data);
-    });
+        return Promise.all(mapper).then(data => {
+            io.emit(message.toString(),data);
+        });
+    }
+
+    else{
+        let mapper = _.map(options,(k,v)=>{
+            if(k.enable){
+                return {url: k.url, parse: k.parse};
+            }
+        });
+
+        mapper = _.uniq(mapper, 'url');
+        mapper = _.compact(mapper);
+        mapper = _.map(mapper,(k,v) => {
+            return exports.request(k.url,k.parse);
+        });
+
+        return Promise.all(mapper).then(data => {
+            io.emit(message.toString(),data);
+        });
+    }
+
 };
