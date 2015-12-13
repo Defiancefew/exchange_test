@@ -3,6 +3,7 @@
 let app = require('express')(),
     passport = require('passport'),
     auth = require('./middlewares/auth.js'),
+    jwt = require('jwt-simple'),
     User = require('./models/User.js');
 
 app.post('/register', passport.authenticate('local-register'), (req, res) => auth.createSendToken(req.user, res));
@@ -10,12 +11,20 @@ app.post('/login', passport.authenticate('local-login'), (req, res) => auth.crea
 
 app.post('/config', (req, res) => {
 
-    //let payload = auth.tokenCheck(req, res);
-    //
-    //User.update({_id: payload.sub}, {apiKey: req.body.apiKey}, null, (err) => {
-    //    if (err) throw(err);
-    //    res.status(200).send({message: 'Everything ok'});
-    //});
+    let payload = auth.tokenCheck(req, res),
+        options;
+
+    if (req.body) {
+        options = req.body;
+        User.update({_id: payload.sub}, {
+            options: options.options,
+            apiKey: options.apiKey,
+            baseValue: options.baseValue
+        }, null, (err) => {
+            if (err) throw(err);
+            res.status(200).send('Everything is fine!');
+        });
+    }
 
 });
 

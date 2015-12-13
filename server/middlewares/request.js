@@ -48,7 +48,7 @@ exports.process = function (options,io,message) {
     });
 
     mapper = _.uniq(mapper, 'url');
-    console.log(mapper);
+    mapper = _.compact(mapper);
 
     mapper = _.map(mapper,(k,v) => {
        return exports.request(k.url,k.parse);

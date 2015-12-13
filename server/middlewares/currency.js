@@ -17,19 +17,6 @@ module.exports = function (io) {
 
         socket.emit('status', 'online');
 
-        socket.on('saveOptions', (options) => {
-            let payload = jwt.decode(options.token, 'shh...');
-
-            if (!payload.sub) {
-                socket.emit('error', {message: 'You\'re not authorized'});
-            }
-
-            User.update({_id: payload.sub}, {options: options.options, apiKey: options.apiKey, baseValue: options.baseValue}, null, (err) => {
-                if (err) throw(err);
-                socket.emit('success', {message: 'Everything fine'});
-            });
-        });
-
         socket.on('getOptions', (options) => {
             let payload = jwt.decode(options.token, 'shh...');
 
@@ -46,10 +33,6 @@ module.exports = function (io) {
         });
 
         socket.on('subscribe', options => {
-            console.log('user subscribed');
-
-            //let data = JSON.parse(fs.readFileSync('output.json', 'utf8')),
-            //    subscription = socket.emit('currency', data);
 
             // TODO : UNCOMMENT AFTER OPTIONS FIX
             let subscription = process(options, socket,'currency');
@@ -61,12 +44,20 @@ module.exports = function (io) {
 
         socket.on('getAdditional',options => {
             additionalSubscription = process(options,socket,'getAdditional');
+            //additionalSubscription = setInterval(()=> {
+            //    process(options, socket,'getAdditional');
+            //}, 3000);
         });
 
         socket.on('unsubscribe', () => {
             console.log('user unsubscribed');
             clearInterval(subscription);
+            clearInterval(additionalSubscription);
             socket.emit('message', 'cancelled subscription')
         });
+
+        socket.on('checkApiKey',(options)=>{
+            process(options,socket,'checkApiKey')
+        })
     });
 };
