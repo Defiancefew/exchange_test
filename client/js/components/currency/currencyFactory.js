@@ -1,62 +1,74 @@
 export default function () {
-    let sortDriver = {},
-        regularExp = {
-            EXF: /eurofxref/,
-            OER: /openexchangerates/,
-            APP: /appspot/
-        };
+    let sortDriver = {};
+
+    sortDriver.regularExp = {
+        EXF: /eurofxref/,
+        OER: /openexchangerates/,
+        APP: /appspot/
+    };
+
+    sortDriver.checkRegExp = function(data, regExp) {
+        let sorted;
+
+        if(data){
+            data.forEach((n)=> {
+                if (regExp.test(n['urlInfo'])) {
+                    sorted = n.data;
+                } else {
+                    return null;
+                }
+            });
+        }
+
+        return sorted;
+    };
 
     sortDriver.sortEXF = function (data) {
-        let sorted;
-        data.forEach((n)=>{
-            if(regularExp.EXF.test(n['urlInfo'])){
-                sorted = n.data;
-            }
-        });
-        return sorted;
-        //return data[0].data;
+        return this.checkRegExp(data, this.regularExp.EXF);
     };
 
     sortDriver.sortOER = function (data) {
-        let keys = _.keys(data[1].data.rates),
-            values = _.values(data[1].data.rates),
-            array = [],
-            euroRate,
-            mapped,
-            index,
-            sorted;
 
-        data.forEach((n)=>{
-            if(regularExp.OER.test(n['urlInfo'])){
-                sorted = n.data;
+        let sorted = this.checkRegExp(data, this.regularExp.OER);
+
+        if (sorted != null) {
+            let keys = _.keys(sorted.rates),
+                values = _.values(sorted.rates),
+                array = [],
+                euroRate,
+                mapped,
+                index;
+
+            for (let i = 0; i < keys.length; i++) {
+                array[i] = {currency: keys[i], rate: values[i]};
             }
-        });
 
+            euroRate = (_.find(array, {currency: 'EUR'})).rate;
+            _.pull(array, _.find(array, {currency: 'EUR'}));
 
-        for (let i = 0; i < keys.length; i++) {
+            mapped = _.map(array, k => {
+                return {currency: k.currency, rate: _.floor((k.rate / euroRate), 4)}
+            });
 
-            array[i] = {currency: keys[i], rate: values[i]};
+            index = _.indexOf(mapped, _.find(mapped, {currency: 'USD'}));
+            mapped[index].rate = _.floor((mapped[index].rate / euroRate), 4);
 
+            return mapped;
+        }else{
+            return null;
         }
 
-        euroRate = (_.find(array, {currency: 'EUR'})).rate;
-        _.pull(array, _.find(array, {currency: 'EUR'}));
-
-
-        mapped = _.map(array, (k, v)=> {
-
-            return {currency: k.currency, rate: _.floor((k.rate / euroRate), 4)}
-
-        });
-
-        index = _.indexOf(mapped, _.find(mapped, {currency: 'USD'}));
-        mapped[index].rate = _.floor((mapped[index].rate / euroRate),4);
-
-        return mapped;
     };
 
     sortDriver.sortAPP = function (data) {
-        return [{currency: data[2].data.target, rate: data[2].data.rate}];
+        let sorted = this.checkRegExp(data, this.regularExp.APP);
+        if (sorted) {
+            return [{currency: sorted.target, rate: sorted.rate}];
+
+        }
+        else {
+            return null;
+        }
     };
 
     return sortDriver;

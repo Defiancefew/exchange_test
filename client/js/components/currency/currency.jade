@@ -1,9 +1,7 @@
 .container
     .row
         .col-md-12
-            h1 Server status : {{currency.status}}
             button.btn(ng-class="{'btn-success':!currency.subscription,'btn-danger':currency.subscription}" ng-click="currency.toggle()") {{currency.message}}
-            h2 Base currency: EUR
             hr
             h4(ng-if="currency.edit") Edit
             input.currency__relative(ng-model="currency.selectedCopy" type="text" maxlength="3")
@@ -25,30 +23,3 @@
                     td {{rel.OER}}
                     td {{rel.EXF}}
                     td {{rel.APP}}
-
-
-            //input.form-control.currency__find(ng-model="currency.find" placeholder="Specify your relative currency here" maxlength="3")
-            //h3 Eurofxref
-            //table.table.table-striped
-            //    tr
-            //        th Currency
-            //        th Rate
-            //    tr(ng-repeat="cur in currency.EXF | filter: {currency: currency.find}")
-            //        td {{cur.currency}}
-            //        td {{cur.rate}}
-            //h3 Open Exchange Rates
-            //table.table.table-striped
-            //    tr
-            //        th Currency
-            //        th Rate
-            //    tr(ng-repeat="cur in currency.OER | filter: {currency: currency.find}")
-            //        td {{cur.currency}}
-            //        td {{cur.rate}}
-            //h3 Appspot
-            //table.table.table-striped
-            //    tr
-            //        th Currency
-            //        th Rate
-            //    tr(ng-repeat="cur in currency.APP | filter: {currency: currency.find}")
-            //        td {{cur.source}}
-            //        td {{cur.rate}}

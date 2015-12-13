@@ -1,32 +1,31 @@
-export default function (API_URL, $http, tokenFactory, socketService,$state) {
+export default function (API_URL, $http, tokenFactory, socketService, $state, alert, $timeout, currencyFactory) {
     var vm = this;
+    vm.baseValue = 'USD';
     //socketService.emit('unsubscribe');
 
     (!tokenFactory.getApi()) ? vm.apiKey = null : vm.apiKey = tokenFactory.getApi();
 
-    socketService.on('error', (error)=> {
-        console.log(error.message);
-    });
+    //socketService.emit('getOptions', {token: tokenFactory.getToken()});
 
-    socketService.emit('getOptions', {token: tokenFactory.getToken()});
+    //socketService.on('getOptions', (options) => {
+    //    tokenFactory.setApi(options.apiKey);
+    //    vm.options = options.options;
+    //
+    //
+    //
+    //});
 
-    socketService.on('getOptions', (options) => {
-        tokenFactory.setApi(options.apiKey);
-        vm.options = options.options;
+    vm.enable = {
+        OER: false,
+        EXF: true,
+        APP: false
+    };
 
-        vm.enable = {
-            OER: vm.options.OER.enable,
-            EXF: vm.options.EXF.enable,
-            APP: vm.options.APP.enable
-        };
-    });
 
-    vm.baseValue = 'USD';
 
     //TODO   Remember - checkbox resets when neither "label for" nor "id" specified
 
-    vm.submit = function () {
-
+    vm.submit = function(){
         vm.options = {
             EXF: {
                 enable: vm.enable.EXF,
@@ -45,9 +44,54 @@ export default function (API_URL, $http, tokenFactory, socketService,$state) {
             }
         };
 
-        socketService.emit('saveOptions', {options: vm.options, token: tokenFactory.getToken(), apiKey: vm.apiKey, baseValue: vm.baseValue});
-        tokenFactory.setApi(vm.apiKey);
+        if(vm.options.OER.enable && vm.apiKey != null){
 
-        $state.go('currency');
-    }
+            socketService.emit('checkApiKey',{OER: {
+                enable: vm.enable.OER,
+                url: `https://openexchangerates.org/api/latest.json?app_id=${vm.apiKey}`,
+                parse: false
+            }});
+            socketService.on('checkApiKey', (data)=> {
+
+                if(currencyFactory.checkRegExp(data, currencyFactory.regularExp.OER)){
+                    $http.post(`${API_URL}config`, {
+                        options: vm.options,
+                        token: tokenFactory.getToken(),
+                        apiKey: tokenFactory.getApi(),
+                        baseValue: vm.baseValue
+                    }).success((message)=> {
+                        vm.error = alert.generateError(true, 'Success!', 'Options are updated');
+                    }).error(()=> {
+                        vm.error = alert.generateError(false, 'Failure!', 'Try again later');
+                    });
+                    tokenFactory.setApi(vm.apiKey);
+                    $timeout(() => {
+                        $state.go('currency')
+                    }, 2000);
+                }else{
+                    vm.error = alert.generateError(false, 'Failure!', 'Specify valid api key');
+                }
+            });
+        }else{
+            $http.post(`${API_URL}config`, {
+                options: vm.options,
+                token: tokenFactory.getToken(),
+                apiKey: tokenFactory.getApi(),
+                baseValue: vm.baseValue
+            }).success((message)=> {
+                vm.error = alert.generateError(true, 'Success!', 'Options are updated');
+            }).error(()=> {
+                vm.error = alert.generateError(false, 'Failure!', 'Try again later');
+            });
+            tokenFactory.setApi(vm.apiKey);
+            $timeout(() => {
+                $state.go('currency')
+            }, 2000);
+        }
+
+    };
+
+
+
+
 }
