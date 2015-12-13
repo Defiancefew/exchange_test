@@ -16,7 +16,7 @@
                     th(ng-if="currency.OER != null") OER
                     th(ng-if="currency.EXF != null") EXF
                     th(ng-if="currency.APP != null") APP
-                tr(ng-repeat="rel in currency.testGlobal track by $index")
+                tr(ng-repeat="rel in currency.testGlobal track by $index | orderBy : 'rel.relative'")
                     td
                         button(ng-click="currency.delete(rel)") Delete
                     td(ng-click="currency.select(rel.relative)") {{rel.relative}}

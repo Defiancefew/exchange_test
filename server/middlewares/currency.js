@@ -37,17 +37,19 @@ module.exports = function (io) {
 
             // TODO : UNCOMMENT AFTER OPTIONS FIX
             let subscription = process(options, socket,'currency');
-            //subscription = setInterval(()=> {
-            //    process(options, socket,'currency');
-            //}, 3000);
+            subscription = setInterval(()=> {
+                process(options, socket,'currency');
+            }, 10000);
 
         });
 
         socket.on('getAdditional',options => {
-            additionalSubscription = process(options,socket,'getAdditional');
-            //additionalSubscription = setInterval(()=> {
-            //    process(options, socket,'getAdditional');
-            //}, 3000);
+            if(options){
+                additionalSubscription = process(options,socket,'getAdditional');
+                //additionalSubscription = setInterval(()=> {
+                //    process(options, socket,'getAdditional');
+                //}, 10000);
+            }
         });
 
         socket.on('unsubscribe', () => {

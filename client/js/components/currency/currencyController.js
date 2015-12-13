@@ -7,7 +7,9 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
     vm.edit = false;
     vm.options = null;
     vm.baseValue = 'USD';
+    vm.filterOrder = 'rel.relative';
     vm.edited = null;
+    vm.loadAppOnce = true;
 
     socketService.emit('getOptions', {token: tokenFactory.getToken()});
 
@@ -25,6 +27,7 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
         }
     };
 
+
     vm.select = (item) => {
 
         vm.edit = true;
@@ -40,6 +43,7 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
 
     };
 
+    // TODO: Fix Save
     vm.save = () => {
         //if(vm.options.APP.enable){
         //    socketService.emit('getAdditional', {
@@ -62,7 +66,6 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
         //}
         //
         //vm.edit = false;
-
     };
 
     vm.delete = (item) => {
@@ -71,17 +74,17 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
 
     vm.toggle = () => {
 
-        //if (vm.subscription) {
-        //    socketService.emit('unsubscribe');
-        //    vm.message = "Subscribe";
-        //    vm.subscription = false;
-        //
-        //}
-        //else {
-        //    socketService.emit('subscribe', vm.options);
-        //    vm.subscription = true;
-        //    vm.message = "Unsubscribe";
-        //}
+        if (vm.subscription) {
+            socketService.emit('unsubscribe');
+            vm.message = "Subscribe";
+            vm.subscription = false;
+
+        }
+        else {
+            socketService.emit('subscribe', vm.options);
+            vm.subscription = true;
+            vm.message = "Unsubscribe";
+        }
     };
 
     socketService.on('getOptions', (options) => {
@@ -93,10 +96,16 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
     });
 
     socketService.on('currency', data => {
+
         vm.subscription = true;
         vm.EXF = currencyFactory.sortEXF(data);
         vm.OER = currencyFactory.sortOER(data);
-        vm.APP = currencyFactory.sortAPP(data);
+
+        if(vm.loadAppOnce){
+            vm.APP = currencyFactory.sortAPP(data);
+        }
+
+        vm.loadAppOnce = false;
 
         vm.testGlobal = [{
             relative: vm.baseValue,
@@ -108,6 +117,8 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
     });
 
     socketService.on('getAdditional', (data)=> {
+        vm.loadAppOnce = false;
+
         if (currencyFactory.sortAPP(data) != null) {
             let sorted = currencyFactory.sortAPP(data)[0];
 
