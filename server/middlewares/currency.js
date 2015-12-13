@@ -14,7 +14,9 @@ module.exports = function (io) {
 
     io.on('connection', (socket) => {
         let subscription,
-            additionalSubscription;
+            additionalSubscription,
+            getAPP,
+            queue = [];
 
         socket.emit('status', 'online');
 
@@ -34,33 +36,57 @@ module.exports = function (io) {
         });
 
         socket.on('subscribe', options => {
+            queue.push(options);
+            console.log(queue);
+            console.log('this from subscribe');
 
             // TODO : UNCOMMENT AFTER OPTIONS FIX
-            let subscription = process(options, socket,'currency');
-            subscription = setInterval(()=> {
-                process(options, socket,'currency');
-            }, 10000);
+            let subscription = process(options, socket, 'currency');
 
+            //subscription = setInterval(()=> {
+            //    process(options, socket,'currency');
+            //}, 10000);
         });
 
-        socket.on('getAdditional',options => {
-            if(options){
-                additionalSubscription = process(options,socket,'getAdditional');
-                additionalSubscription = setInterval(()=> {
-                    process(options, socket,'getAdditional');
-                }, 5000);
+        socket.on('getAPP', options => {
+            if (options) {
+                console.log(queue);
+                console.log('this from getAPP');
+                getAPP = process(options, socket, 'getAPP');
+                //additionalSubscription = setInterval(()=> {
+                //    process(options, socket,'getAPP');
+                //}, 5000);
+            }
+        });
+
+        socket.on('getAdditional', options => {
+            if (options) {
+                queue.push(options);
+                console.log(queue);
+                console.log('this from getAdditional');
+
+                additionalSubscription = process(options, socket, 'getAdditional');
+                //additionalSubscription = setInterval(()=> {
+                //    process(options, socket,'getAdditional');
+                //}, 5000);
+            } else {
+                socket.emit('getAdditional');
             }
         });
 
         socket.on('unsubscribe', () => {
-            console.log('user unsubscribed');
+            console.log(queue);
+            clearInterval(getAPP);
             clearInterval(subscription);
             clearInterval(additionalSubscription);
-            socket.emit('message', 'cancelled subscription')
         });
 
-        socket.on('checkApiKey',(options)=>{
-            process(options,socket,'checkApiKey')
+        socket.on('unsubscribeAPP', () => {
+            clearInterval(getAPP);
+        });
+
+        socket.on('checkApiKey', (options)=> {
+            process(options, socket, 'checkApiKey')
         })
     });
 };

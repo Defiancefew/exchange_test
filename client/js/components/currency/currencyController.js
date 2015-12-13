@@ -9,11 +9,13 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
     vm.baseValue = 'USD';
     vm.filterOrder = 'rel.relative';
     vm.edited = null;
-    vm.loadAppOnce = true;
+    vm.getAdditional = false;
 
     socketService.emit('getOptions', {token: tokenFactory.getToken()});
 
     vm.find = () => {
+        vm.getAdditional = true;
+
         if (vm.options.APP.enable) {
             socketService.emit('getAdditional', {
                 APP: {
@@ -26,7 +28,6 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
             socketService.emit('getAdditional');
         }
     };
-
 
     vm.select = (item) => {
 
@@ -44,6 +45,7 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
     };
 
     // TODO: Fix Save
+
     vm.save = () => {
         //if(vm.options.APP.enable){
         //    socketService.emit('getAdditional', {
@@ -87,12 +89,22 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
         }
     };
 
+
     socketService.on('getOptions', (options) => {
         vm.options = options.options;
         vm.baseValue = options.baseValue;
 
         if (vm.subscription) {
-            socketService.emit("subscribe", vm.options);
+            if (vm.options.EXF.enable || vm.options.OER.enable) {
+                socketService.emit("subscribe", {EXF: vm.options.EXF, OER: vm.options.OER});
+            }
+            if (vm.options.APP.enable) {
+                if (!vm.getAdditional) {
+                    socketService.emit("getAPP", {APP: vm.options.APP});
+                } else {
+                    socketService.emit("UnsubscribeAPP");
+                }
+            }
             vm.message = 'Unsubscribe';
         }
 
@@ -100,40 +112,34 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
 
     socketService.on('currency', data => {
 
-        console.log(data);
         vm.EXF = currencyFactory.sortEXF(data);
         vm.OER = currencyFactory.sortOER(data);
-
-        if(vm.loadAppOnce){
-            vm.APP = currencyFactory.sortAPP(data);
-        }
-
-        vm.loadAppOnce = false;
+        //vm.APP = currencyFactory.sortAPP(data);
 
         vm.testGlobal = [{
             relative: vm.baseValue,
             EXF: (vm.EXF != null) ? (_.find(vm.EXF, {currency: vm.baseValue}).rate) : null,
-            OER: (vm.OER != null) ? (_.find(vm.OER, {currency: vm.baseValue}).rate) : null,
-            APP: (vm.APP != null) ? (_.find(vm.APP, {currency: vm.baseValue}).rate) : null
+            OER: (vm.OER != null) ? (_.find(vm.OER, {currency: vm.baseValue}).rate) : null
+            , APP: (vm.APP != null) ? (_.find(vm.APP, {currency: vm.baseValue}).rate) : null
         }];
 
     });
 
     socketService.on('getAdditional', (data)=> {
-        vm.loadAppOnce = false;
+        if (data) {
+            vm.APP.push(currencyFactory.sortAPP(data));
+            if (currencyFactory.sortAPP(data) != null) {
+                let sorted = currencyFactory.sortAPP(data)[0];
 
-        if (currencyFactory.sortAPP(data) != null) {
-            let sorted = currencyFactory.sortAPP(data)[0];
-
-            if (sorted.rate && vm.selectedCopy) {
-                if (_.indexOf(vm.APP, {currency: vm.selectedCopy}) == -1) {
-                    vm.APP.push({currency: sorted.currency, rate: sorted.rate});
+                if (sorted.rate && vm.selectedCopy) {
+                    if (_.indexOf(vm.APP, {currency: vm.selectedCopy}) == -1) {
+                        vm.APP.push({currency: sorted.currency, rate: sorted.rate});
+                    }
                 }
             }
         }
 
         if (vm.selectedCopy) {
-
             function search() {
                 let findOER = _.find(vm.OER, {currency: vm.selectedCopy}),
                     findEXF = _.find(vm.EXF, {currency: vm.selectedCopy}),
@@ -143,17 +149,20 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
                 // false if not found in any of the services
 
                 if (!!(findOER || findEXF || findAPP)) {
-                    function checkValidCurrencyArray(array,findCurrency) {
+                    function checkValidCurrencyArray(array, findCurrency) {
                         if (array) {
                             if (_.indexOf(array, {currency: vm.selectedCopy}) == -1) {
-                                (findCurrency === undefined) ? array.push({currency: vm.selectedCopy, rate: null}) : null;
+                                (findCurrency === undefined) ? array.push({
+                                    currency: vm.selectedCopy,
+                                    rate: null
+                                }) : null;
                             }
                         }
                     }
 
-                    checkValidCurrencyArray(vm.OER,findOER);
-                    checkValidCurrencyArray(vm.EXF,findEXF);
-                    checkValidCurrencyArray(vm.APP,findAPP);
+                    checkValidCurrencyArray(vm.OER, findOER);
+                    checkValidCurrencyArray(vm.EXF, findEXF);
+                    checkValidCurrencyArray(vm.APP, findAPP);
 
                     vm.testGlobal.push({
                         relative: vm.selectedCopy,
@@ -171,4 +180,19 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
         }
 
     });
+
+    socketService.on('getAPP', (data)=> {
+        let APPdata = currencyFactory.sortAPP(data);
+        vm.APP = APPdata;
+        //vm.testGlobal[0].APP = APPdata[0]['rate'];
+
+        vm.testGlobal = [{
+            relative: vm.baseValue,
+            EXF: (vm.EXF != null) ? (_.find(vm.EXF, {currency: vm.baseValue}).rate) : null,
+            OER: (vm.OER != null) ? (_.find(vm.OER, {currency: vm.baseValue}).rate) : null
+            , APP: (vm.APP != null) ? (_.find(vm.APP, {currency: vm.baseValue}).rate) : null
+        }];
+    });
+
+
 }

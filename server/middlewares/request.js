@@ -59,7 +59,6 @@ exports.process = function (options,io,message) {
        return exports.request(k.url,k.parse);
     });
 
-
     return Promise.all(mapper).then(data => {
         io.emit(message.toString(),data);
     });
