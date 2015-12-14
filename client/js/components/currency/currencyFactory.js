@@ -80,7 +80,7 @@ export default function () {
         let sorted = this.checkRegExp(data, this.regularExp.APP),
             sortedData;
 
-        if (sorted) {
+        if (sorted.length) {
             sortedData = _.map(sorted, k => {
                 return (!!k.rate) ? {currency: k.target, rate: k.rate} : {currency: k.tareg, rate: null};
             });

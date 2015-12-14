@@ -114,9 +114,7 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
                 vm.queue.push(vm.options.OER);
             }
             if (vm.options.APP.enable) {
-                if (!vm.getAdditional) {
                     vm.queue.push(vm.options.APP);
-                }
             }
             vm.message = 'Unsubscribe';
         }

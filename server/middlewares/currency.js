@@ -13,8 +13,7 @@ let fs = require('fs'),
 module.exports = function (io) {
 
     io.on('connection', (socket) => {
-        let queued,
-            queueInit = true;
+        let queued;
 
         socket.emit('status', 'online');
 
@@ -38,7 +37,7 @@ module.exports = function (io) {
         });
 
         socket.on('queue', (queue) => {
-                process(queue, socket, 'queue');
+            process(queue, socket, 'queue');
         });
 
         socket.on('unsubscribe', ()=> {
