@@ -1,4 +1,4 @@
-export default function (socketService, alert, tokenFactory, $scope, currencyFactory) {
+export default function (socketService, alert, tokenFactory, $scope, currencyFactory,$timeout) {
 
     let vm = this;
     vm.status = 'disconnected';
@@ -13,6 +13,7 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
     vm.initCurrencyArray = true;
     vm.selectedValue = '';
     vm.time = null;
+    vm.showLoader = false;
 
     let timer;
 
@@ -133,6 +134,11 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
     });
 
     socketService.on('queue', (response)=> {
+        vm.showLoader = true;
+        $timeout(()=>{
+            vm.showLoader = false;
+        },1000);
+
         let data = response.data,
             duplicate;
         vm.time = response.time;

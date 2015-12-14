@@ -19,7 +19,8 @@ app.post('/config', (req, res) => {
         User.update({_id: payload.sub}, {
             options: options.options,
             apiKey: options.apiKey,
-            baseValue: options.baseValue
+            baseValue: options.baseValue,
+            lastUpdated: options.lastUpdated
         }, null, (err) => {
             if (err) throw(err);
             res.status(200).send('Everything is fine!');

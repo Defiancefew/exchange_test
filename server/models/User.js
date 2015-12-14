@@ -10,6 +10,7 @@ var UserSchema = new mongoose.Schema({
     password: String,
     apiKey: String,
     baseValue: String,
+    lastUpdated: String,
     options: mongoose.Schema.Types.Mixed
 });
 

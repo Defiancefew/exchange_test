@@ -3,9 +3,11 @@
 let LocalStrategy = require('passport-local').Strategy,
     jwt = require('jwt-simple'),
     User = require('../models/User.js'),
+    time = require('./time'),
     strategyOptions = {
         usernameField: 'email'
-    };
+    },
+    moment = require('moment');
 
 exports.loginStrategy = new LocalStrategy(strategyOptions, function (email, password, done) {
 
@@ -47,6 +49,7 @@ exports.registerStrategy = new LocalStrategy(strategyOptions, function (email, p
                 password: password,
                 apiKey: '',
                 baseValue: 'USD',
+                lastUpdated: moment().format('MMMM Do YYYY, h:mm:ss a'),
                 options: {
                     EXF: {
                         enable: true,

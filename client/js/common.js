@@ -3,7 +3,7 @@ import 'angular-ui-router';
 import 'angular-socket-io';
 import 'angular-messages';
 
-import moment from 'moment';
+import moment from 'moment'
 import $ from 'jquery';
 import _ from 'lodash';
 
@@ -20,6 +20,7 @@ import './components/login';
 import './components/register';
 
 import '../sass/style.sass';
+import '../css/loader.css';
 
 angular.module('myApp', ['ui.router', 'ngMessages',
     'btford.socket-io', 'alert', 'config','currency','header',

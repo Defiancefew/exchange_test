@@ -1,4 +1,4 @@
-export default function (API_URL, $http, tokenFactory, socketService, $state, alert, $timeout, currencyFactory) {
+export default function (API_URL, $http, tokenFactory, socketService, $state, alert, $timeout, currencyFactory, moment) {
     var vm = this;
     vm.baseValue = 'USD';
 
@@ -15,6 +15,7 @@ export default function (API_URL, $http, tokenFactory, socketService, $state, al
             options: options,
             token: tokenFactory.getToken(),
             apiKey: tokenFactory.getApi(),
+            lastUpdated: moment().format('MMMM Do YYYY, h:mm:ss a'),
             baseValue: vm.baseValue
         }).success((res)=> {
             if (res.options) {
@@ -22,12 +23,13 @@ export default function (API_URL, $http, tokenFactory, socketService, $state, al
                 vm.options = res.options;
                 vm.apiKey = res.apiKey;
                 vm.baseValue = res.baseValue;
+                vm.lastUpdated = moment(res.lastUpdated).fromNow();
 
-                vm.enable = {
-                    EXF: vm.options.EXF.enable,
-                    OER: vm.options.OER.enable,
-                    APP: vm.options.APP.enable
-                };
+                    vm.enable = {
+                        EXF: vm.options.EXF.enable,
+                        OER: vm.options.OER.enable,
+                        APP: vm.options.APP.enable
+                    };
             } else {
                 $timeout(() => {
                     $state.go('currency')
@@ -75,7 +77,7 @@ export default function (API_URL, $http, tokenFactory, socketService, $state, al
             });
 
             socketService.on('checkApiKey', (data)=> {
-                let check =  currencyFactory.checkRegExp(data, currencyFactory.regularExp.OER);
+                let check = currencyFactory.checkRegExp(data.data, currencyFactory.regularExp.OER);
 
                 if (check.error) {
                     vm.error = alert.generateError(false, 'Failure!', check.description);

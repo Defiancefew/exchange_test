@@ -4,6 +4,7 @@ let fs = require('fs'),
     User = require('../models/User'),
     currencyDriver = require('./request');
 
+
 // TODO Refactor options + request different currency from appspot
 
 // OER Api key (expired):  d4f7a49c4d5842feb302f37549c768f9
@@ -12,7 +13,7 @@ let fs = require('fs'),
 module.exports = function (io) {
 
     io.on('connection', (socket) => {
-        let queued;
+        //let queued;
 
         socket.emit('status', 'online');
 
@@ -24,7 +25,7 @@ module.exports = function (io) {
                     throw(err)
                 }
                 if (user.options) {
-                    socket.emit('getOptions', {options: user.options, apiKey: user.apiKey, baseValue: user.baseValue});
+                    socket.emit('getOptions', {options: user.options, apiKey: user.apiKey, baseValue: user.baseValue, lastUpdated: user.lastUpdated});
                 } else {
                     socket.emit('error', {message: 'Something went wrong'});
                 }
@@ -39,8 +40,8 @@ module.exports = function (io) {
             currencyDriver.process(queue, socket, 'queue');
         });
 
-        socket.on('unsubscribe', ()=> {
-            clearInterval(queued);
-        })
+        //socket.on('unsubscribe', ()=> {
+        //    clearInterval(queued);
+        //})
     });
 };
