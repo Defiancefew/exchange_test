@@ -36,6 +36,8 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
 
         if (vm.options.APP.enable) {
             vm.queue.push(app);
+        }else {
+            socketService.emit('queue', vm.queue);
         }
     };
 
