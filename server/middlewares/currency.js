@@ -1,9 +1,8 @@
 "use strict";
 let fs = require('fs'),
-    requestDriver = require('./request').request,
     jwt = require('jwt-simple'),
     User = require('../models/User'),
-    process = require('./request').process;
+    currencyDriver = require('./request');
 
 // TODO Refactor options + request different currency from appspot
 
@@ -33,11 +32,11 @@ module.exports = function (io) {
         });
 
         socket.on('checkApiKey', (options)=> {
-            process(options, socket, 'checkApiKey')
+            currencyDriver.process(options, socket, 'checkApiKey')
         });
 
         socket.on('queue', (queue) => {
-            process(queue, socket, 'queue');
+            currencyDriver.process(queue, socket, 'queue');
         });
 
         socket.on('unsubscribe', ()=> {

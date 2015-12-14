@@ -6,12 +6,15 @@
             hr
         .col-md-6.col-md-offset-3
             h4(ng-if="currency.edit") Edit
-            input.currency__relative(ng-model="currency.selectedValue" type="text" maxlength="3")
-            button.currency__find.btn.btn-success(ng-if="!currency.edit" ng-click="currency.find()") Find
+            div
+                input.currency__relative(ng-model="currency.selectedValue" type="text" maxlength="3")
+                button.currency__find.btn.btn-success(ng-if="!currency.edit" ng-click="currency.find()") Find
             button.btn.btn-danger(ng-if="currency.edit" ng-click="currency.cancel()") Cancel
             button.btn.btn-success(ng-if="currency.edit" ng-click="currency.save()") Save
             alert(ng-if="currency.error" type="currency.error.type" title="currency.error.title" message="currency.error.message")
         .col-md-6.col-md-offset-3
+            h1 Currency on {{currency.time}}
+
             table.table.table-striped
                 tr
                     th Delete

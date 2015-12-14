@@ -12,8 +12,16 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
     vm.queue = [];
     vm.initCurrencyArray = true;
     vm.selectedValue = '';
+    vm.time = null;
 
     let timer;
+
+    timer = setInterval(()=> {
+        console.log(vm.queue);
+        socketService.emit('queue', vm.queue);
+        vm.subscription = true;
+        vm.message = "Unsubscribe";
+    }, 5000);
 
     socketService.emit('getOptions', {token: tokenFactory.getToken()});
 
@@ -36,7 +44,7 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
 
         if (vm.options.APP.enable) {
             vm.queue.push(app);
-        }else {
+        } else {
             socketService.emit('queue', vm.queue);
         }
     };
@@ -89,14 +97,14 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
     vm.toggle = () => {
 
         if (vm.subscription) {
-            vm.message = "Subscribe";
             vm.subscription = false;
+            vm.message = "Subscribe";
             clearInterval(timer);
         }
         else {
             vm.subscription = true;
             vm.message = "Unsubscribe";
-            timer =  setInterval(()=>{
+            timer = setInterval(()=> {
                 socketService.emit('queue', vm.queue);
                 vm.subscription = true;
                 vm.message = "Unsubscribe";
@@ -116,14 +124,19 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
                 vm.queue.push(vm.options.OER);
             }
             if (vm.options.APP.enable) {
-                    vm.queue.push(vm.options.APP);
+                vm.queue.push(vm.options.APP);
             }
+
             vm.message = 'Unsubscribe';
         }
 
     });
 
-    socketService.on('queue', (data)=> {
+    socketService.on('queue', (response)=> {
+        let data = response.data,
+            duplicate;
+        vm.time = response.time;
+
 
         vm.EXF = currencyFactory.sortEXF(data)[0];
         vm.OER = currencyFactory.sortOER(data);
@@ -149,17 +162,16 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
                     findEXF = _.find(vm.EXF, {currency: vm.selectedCopy}),
                     findAPP = _.find(vm.APP, {currency: vm.selectedCopy});
 
+                //console.log(findOER,findEXF,findAPP);
+
                 // true if found in one or few services
                 // false if not found in any of the services
 
                 if (!!(findOER || findEXF || findAPP)) {
                     function checkValidCurrencyArray(array, findCurrency) {
                         if (array) {
-                            if (_.indexOf(array, {currency: vm.selectedCopy}) == -1) {
-                                (findCurrency === undefined) ? array.push({
-                                    currency: vm.selectedCopy,
-                                    rate: null
-                                }) : null;
+                            if (_.indexOf(array, {currency: vm.selectedCopy}) === -1) {
+                                (findCurrency === undefined) ? array.push({currency: vm.selectedCopy, rate: null}) : null;
                             }
                         }
                     }
@@ -168,12 +180,16 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
                     checkValidCurrencyArray(vm.EXF, findEXF);
                     checkValidCurrencyArray(vm.APP, findAPP);
 
-                    vm.testGlobal.push({
-                        relative: vm.selectedCopy,
-                        EXF: (vm.EXF != null) ? (_.find(vm.EXF, {currency: vm.selectedCopy}).rate) : null,
-                        OER: (vm.OER != null) ? (_.find(vm.OER, {currency: vm.selectedCopy}).rate) : null,
-                        APP: (vm.APP != null) ? (_.find(vm.APP, {currency: vm.selectedCopy}).rate) : null
-                    });
+                    duplicate = _.find(vm.testGlobal,{relative: vm.selectedCopy});
+
+                    if(duplicate === undefined){
+                        vm.testGlobal.push({
+                            relative: vm.selectedCopy,
+                            EXF: (vm.EXF != null) ? (_.find(vm.EXF, {currency: vm.selectedCopy}).rate) : null,
+                            OER: (vm.OER != null) ? (_.find(vm.OER, {currency: vm.selectedCopy}).rate) : null,
+                            APP: (vm.APP != null) ? (_.find(vm.APP, {currency: vm.selectedCopy}).rate) : null
+                        });
+                    }
 
                 } else {
                     vm.error = alert.generateError(false, 'Error', 'Currency not found');
@@ -184,7 +200,7 @@ export default function (socketService, alert, tokenFactory, $scope, currencyFac
         }
     });
 
-    socketService.on('status',(status)=>{
-       vm.status = status;
+    socketService.on('status', (status)=> {
+        vm.status = status;
     });
 }
